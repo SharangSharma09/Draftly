@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Text Transformer",
+  "version": "1.0.0",
+  "description": "A Chrome extension that provides text modification tools using LLM models",
+  "icons": {
+    "16": "public/icons/icon-16.png",
+    "48": "public/icons/icon-48.png",
+    "128": "public/icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Text Transformer"
+  },
+  "permissions": [
+    "sidePanel",
+    "storage"
+  ],
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/contentScript.ts"]
+    }
+  ]
+}

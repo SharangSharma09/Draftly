@@ -1,7 +1,6 @@
 import { callOpenAI } from './openai';
 import { callPerplexity } from './perplexity';
 import { TransformAction, LLMModel, ModelProvider, EmojiOption } from '@/pages/TextTransformer';
-import { TonePosition } from '@/components/ToneSelector';
 
 // Function to determine which provider a model belongs to
 function getModelProvider(model: LLMModel): ModelProvider {
@@ -19,8 +18,7 @@ export async function transformText(
   text: string, 
   action: TransformAction, 
   model: LLMModel,
-  emojiOption: EmojiOption = 'off',
-  tonePosition: TonePosition = { formality: 50, style: 50 }
+  emojiOption: EmojiOption = 'off'
 ): Promise<string> {
   if (!text.trim()) {
     return '';
@@ -32,14 +30,14 @@ export async function transformText(
   let result = '';
   switch (provider) {
     case 'openai':
-      result = await callOpenAI(text, action, model, tonePosition);
+      result = await callOpenAI(text, action, model);
       break;
     case 'perplexity':
-      result = await callPerplexity(text, action, model, tonePosition);
+      result = await callPerplexity(text, action, model);
       break;
     default:
       // For other providers, use OpenAI as a fallback
-      result = await callOpenAI(text, action, 'gpt-3.5-turbo', tonePosition);
+      result = await callOpenAI(text, action, 'gpt-3.5-turbo');
       break;
   }
 
@@ -76,18 +74,18 @@ function addMinimalEmojis(text: string, action: TransformAction): string {
 // Get an emoji based on the transformation action
 function getActionEmoji(action: TransformAction): string {
   switch (action) {
-    case 'summarize':
-      return '📝';
-    case 'paraphrase':
-      return '🔄';
-    case 'formalize':
-      return '👔';
     case 'simplify':
-      return '🔍';
-    case 'bullets':
-      return '📋';
+      return '✂️';
     case 'expand':
       return '📚';
+    case 'formal':
+      return '👔';
+    case 'casual':
+      return '😊';
+    case 'persuasive':
+      return '🎯';
+    case 'witty':
+      return '😄';
     default:
       return '✨';
   }

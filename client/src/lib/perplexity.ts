@@ -1,12 +1,10 @@
 import { LLMModel, TransformAction } from '@/pages/TextTransformer';
-import { TonePosition } from '@/components/ToneSelector';
 
 // Function to transform text using Perplexity API
 export async function callPerplexity(
   text: string,
   action: TransformAction,
-  model: LLMModel = 'llama-3',
-  tonePosition: TonePosition = { formality: 50, style: 50 }
+  model: LLMModel = 'llama-3'
 ): Promise<string> {
   // The newest Perplexity model is "llama-3.1-sonar-small-128k-online"
   const apiModel = 'llama-3.1-sonar-small-128k-online';
@@ -18,8 +16,8 @@ export async function callPerplexity(
   }
   
   try {
-    // Create the system prompt based on the action and tone position
-    const systemPrompt = createSystemPrompt(action, tonePosition);
+    // Create the system prompt based on the action
+    const systemPrompt = createSystemPrompt(action);
     
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -54,50 +52,32 @@ export async function callPerplexity(
   }
 }
 
-// Create system prompts based on the action and tone position
-function createSystemPrompt(action: TransformAction, tonePosition: TonePosition = { formality: 50, style: 50 }): string {
-  // Get tone descriptors based on the tone position
-  const formalityLevel = getFormalityDescription(tonePosition.formality);
-  const styleLevel = getStyleDescription(tonePosition.style);
-  
-  const toneInstruction = `Use a ${formalityLevel}, ${styleLevel} tone in your response.`;
+// Create system prompts based on the action
+function createSystemPrompt(action: TransformAction): string {
+  const baseInstruction = "Important: Do not include any introductory phrases like 'This is a processed version of' in your response - just provide the processed text directly.";
   
   switch (action) {
-    case 'summarize':
-      return `You are a helpful assistant that summarizes text concisely while preserving the key points. Create a summary that is about 30% of the original length. ${toneInstruction} Important: Do not include phrases like "This is a summary of" or "Here's a summary" in your response - just provide the summary directly.`;
-    
-    case 'paraphrase':
-      return `You are a helpful assistant that paraphrases text. Rewrite the text in a different way while keeping the same meaning. Do not add or remove information. ${toneInstruction} Important: Do not include phrases like "This is a paraphrased version of" or "Here's a paraphrase" in your response - just provide the paraphrased text directly.`;
-    
-    case 'formalize':
-      return `You are a helpful assistant that makes text more formal and professional. Improve the language to be suitable for business or academic contexts while maintaining the original meaning. ${toneInstruction} Important: Do not include phrases like "This is a formal version of" in your response - just provide the formalized text directly.`;
-    
     case 'simplify':
-      return `You are a helpful assistant that simplifies complex text. Make the text easier to understand by using simpler words and shorter sentences. Target a middle-school reading level. ${toneInstruction} Important: Do not include phrases like "This is a simplified version of" in your response - just provide the simplified text directly.`;
-    
-    case 'bullets':
-      return `You are a helpful assistant that converts text into bullet points. Extract the key points and organize them as a bulleted list. Each bullet should be concise and clear. ${toneInstruction} Important: Do not include introductory phrases like "Here are the key points" - just provide the bullet points directly.`;
+      return `You are a helpful assistant that shortens text. Make the text more concise by removing unnecessary details while preserving the core message. Target a 50% reduction in length. ${baseInstruction}`;
     
     case 'expand':
-      return `You are a helpful assistant that expands text with additional details. Elaborate on the given text by adding explanations, examples, or context that makes the content more comprehensive. ${toneInstruction} Important: Do not include phrases like "This is an expanded version of" in your response - just provide the expanded text directly.`;
+      return `You are a helpful assistant that elaborates on text. Add relevant details, examples, and explanations to make the content more comprehensive and informative. ${baseInstruction}`;
+    
+    case 'formal':
+      return `You are a helpful assistant that makes text more formal. Use complete sentence structures, sophisticated vocabulary, and a neutral, respectful tone. The text should be suitable for professional or academic contexts. ${baseInstruction}`;
+    
+    case 'casual':
+      return `You are a helpful assistant that makes text more casual and conversational. Use relaxed sentence structures, everyday language, and an approachable, friendly tone. The text should sound natural as if spoken between friends. ${baseInstruction}`;
+      
+    case 'persuasive':
+      return `You are a helpful assistant that makes text more persuasive. Use direct and compelling sentence structures, strong vocabulary, and a motivating, influential tone. The text should effectively convince the reader. ${baseInstruction}`;
+      
+    case 'witty':
+      return `You are a helpful assistant that makes text more witty. Use playful sentence structures, clever wordplay, and a lighthearted, humorous tone. The text should be engaging and entertaining. ${baseInstruction}`;
     
     default:
-      return `You are a helpful assistant. Process the following text as requested. ${toneInstruction} Important: Do not include any introductory phrases like "This is a processed version of" in your response - just provide the processed text directly.`;
+      return `You are a helpful assistant. Process the following text as requested. ${baseInstruction}`;
   }
-}
-
-// Helper function to get formality description based on the tone position
-function getFormalityDescription(formality: number): string {
-  if (formality < 30) return 'casual and conversational';
-  if (formality < 70) return 'professional and polished';
-  return 'formal and academic';
-}
-
-// Helper function to get style description based on the tone position
-function getStyleDescription(style: number): string {
-  if (style < 30) return 'witty and engaging';
-  if (style < 70) return 'clear and informative';
-  return 'persuasive and authoritative';
 }
 
 // Mock implementation for when API is not available
@@ -108,23 +88,23 @@ function mockTransformResponse(text: string, action: TransformAction): string {
   const preview = text.length > 100 ? text.substring(0, 100) + '...' : text;
   
   switch (action) {
-    case 'summarize':
-      return `The main points of the text focus on ${preview.substring(0, 40)}...`;
-    
-    case 'paraphrase':
-      return `${preview.substring(0, 40)}... [content rewritten differently]`;
-    
-    case 'formalize':
-      return `${preview.substring(0, 40)}... [expressed in more formal language]`;
-    
     case 'simplify':
-      return `${preview.substring(0, 40)}... [presented in simpler terms]`;
-    
-    case 'bullets':
-      return `• Key point about ${preview.substring(0, 30)}\n• Important insight from the text\n• Final conclusion`;
+      return `${preview.substring(0, 40)}... [shortened version]`;
     
     case 'expand':
       return `${preview.substring(0, 40)}... [with additional context and elaboration on the main topics]`;
+    
+    case 'formal':
+      return `${preview.substring(0, 40)}... [expressed in formal language]`;
+    
+    case 'casual':
+      return `${preview.substring(0, 40)}... [expressed in casual, conversational language]`;
+      
+    case 'persuasive':
+      return `${preview.substring(0, 40)}... [expressed persuasively]`;
+      
+    case 'witty':
+      return `${preview.substring(0, 40)}... [expressed with wit and humor]`;
     
     default:
       return text;

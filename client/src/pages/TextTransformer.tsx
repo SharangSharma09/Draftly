@@ -6,7 +6,6 @@ import { HistoryItem } from '@/components/HistoryItem';
 import { CopyButton } from '@/components/CopyButton';
 import { ClearButton } from '@/components/ClearButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
-import { ToneSelector, TonePosition } from '@/components/ToneSelector';
 import { transformText } from '@/lib/transformations';
 import { saveHistory, getHistory, clearHistoryStorage } from '@/lib/storage';
 import { Switch } from "@/components/ui/switch";
@@ -14,7 +13,7 @@ import { Label } from "@/components/ui/label";
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
 export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
-export type TransformAction = 'summarize' | 'paraphrase' | 'formalize' | 'simplify' | 'bullets' | 'expand';
+export type TransformAction = 'simplify' | 'expand' | 'formal' | 'casual' | 'persuasive' | 'witty';
 export type EmojiOption = 'on' | 'off';
 
 export interface HistoryEntry {
@@ -29,15 +28,20 @@ const TextTransformer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<LLMModel>('gpt-3.5-turbo');
   const [emojiOption, setEmojiOption] = useState<EmojiOption>('off');
-  const [tonePosition, setTonePosition] = useState<TonePosition>({ formality: 50, style: 50 });
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   // Action button definitions with their respective icons and colors
   const actionButtons = [
-    { action: 'paraphrase' as TransformAction, icon: 'autorenew', color: 'text-accent', label: 'Paraphrase' },
-    { action: 'formalize' as TransformAction, icon: 'business', color: 'text-secondary', label: 'Formalize' },
-    { action: 'simplify' as TransformAction, icon: 'psychology', color: 'text-success', label: 'Simplify' },
-    { action: 'expand' as TransformAction, icon: 'add_circle', color: 'text-error', label: 'Expand' },
+    { action: 'simplify' as TransformAction, icon: 'psychology', color: 'text-success', label: 'Shorten' },
+    { action: 'expand' as TransformAction, icon: 'add_circle', color: 'text-error', label: 'Elaborate' },
+  ];
+  
+  // Tone button definitions
+  const toneButtons = [
+    { action: 'formal' as TransformAction, icon: 'work', color: 'text-primary', label: 'Formal' },
+    { action: 'casual' as TransformAction, icon: 'chat', color: 'text-accent', label: 'Casual' },
+    { action: 'persuasive' as TransformAction, icon: 'trending_up', color: 'text-warning', label: 'Persuasive' },
+    { action: 'witty' as TransformAction, icon: 'emoji_objects', color: 'text-secondary', label: 'Witty' },
   ];
 
   // Load history from storage on component mount
@@ -56,7 +60,7 @@ const TextTransformer: React.FC = () => {
     setLoading(true);
     
     try {
-      const transformedText = await transformText(inputText, action, selectedModel, emojiOption, tonePosition);
+      const transformedText = await transformText(inputText, action, selectedModel, emojiOption);
       setInputText(transformedText);
       
       // Save to history
@@ -162,10 +166,10 @@ const TextTransformer: React.FC = () => {
                 
                 // Auto-transform the text if we have text
                 if (inputText.trim()) {
-                  // Use the most recent transformation action or default to paraphrase
+                  // Use the most recent transformation action or default to simplify
                   const lastAction = history.length > 0 
                     ? history[0].action 
-                    : 'paraphrase' as TransformAction;
+                    : 'simplify' as TransformAction;
                   handleTransform(lastAction);
                 }
               }}
@@ -173,46 +177,40 @@ const TextTransformer: React.FC = () => {
           </div>
         </div>
         
-        {/* Tone Selector */}
-        <div className="mb-4 mt-2">
-          <h2 className="text-sm font-medium text-gray-700 mb-2">Adjust Tone</h2>
-          <ToneSelector 
-            onChange={(newPosition) => {
-              setTonePosition(newPosition);
-              
-              // Auto-transform the text if we have text
-              if (inputText.trim() && !loading) {
-                // Use the most recent transformation action or default to paraphrase
-                const lastAction = history.length > 0 
-                  ? history[0].action 
-                  : 'paraphrase' as TransformAction;
-                  
-                // Add a small delay to prevent excessive API calls during dragging
-                const timerId = setTimeout(() => {
-                  handleTransform(lastAction);
-                }, 500);
-                
-                // Clean up the timer
-                return () => clearTimeout(timerId);
-              }
-            }} 
-            disabled={loading || !inputText.trim()}
-          />
+        {/* Action buttons section */}
+        <div className="mb-4">
+          <h2 className="text-sm font-medium text-gray-700 mb-2">Transform Text</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {actionButtons.map((button) => (
+              <ActionButton
+                key={button.action}
+                action={button.action}
+                icon={button.icon}
+                color={button.color}
+                label={button.label}
+                onClick={() => handleTransform(button.action)}
+                disabled={loading || !inputText.trim()}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Action buttons section */}
-        <div className="grid grid-cols-2 gap-2">
-          {actionButtons.map((button) => (
-            <ActionButton
-              key={button.action}
-              action={button.action}
-              icon={button.icon}
-              color={button.color}
-              label={button.label}
-              onClick={() => handleTransform(button.action)}
-              disabled={loading || !inputText.trim()}
-            />
-          ))}
+        {/* Tone buttons section */}
+        <div className="mb-4">
+          <h2 className="text-sm font-medium text-gray-700 mb-2">Adjust Tone</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {toneButtons.map((button) => (
+              <ActionButton
+                key={button.action}
+                action={button.action}
+                icon={button.icon}
+                color={button.color}
+                label={button.label}
+                onClick={() => handleTransform(button.action)}
+                disabled={loading || !inputText.trim()}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Recent history section */}

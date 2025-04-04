@@ -29,6 +29,7 @@ const TextTransformer: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<LLMModel>('gpt-3.5-turbo');
   const [emojiOption, setEmojiOption] = useState<EmojiOption>('off');
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [usedActions, setUsedActions] = useState<TransformAction[]>([]);
 
   // Action button definitions with their respective icons and colors
   const actionButtons = [
@@ -63,6 +64,11 @@ const TextTransformer: React.FC = () => {
       const transformedText = await transformText(inputText, action, selectedModel, emojiOption);
       setInputText(transformedText);
       
+      // Mark this action as used
+      if (!usedActions.includes(action)) {
+        setUsedActions([...usedActions, action]);
+      }
+      
       // Save to history
       const newEntry: HistoryEntry = {
         id: Date.now().toString(),
@@ -81,6 +87,10 @@ const TextTransformer: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+  
+  const handleResetActions = () => {
+    setUsedActions([]);
   };
 
   const handleHistoryItemClick = (entry: HistoryEntry) => {
@@ -179,7 +189,17 @@ const TextTransformer: React.FC = () => {
         
         {/* Action buttons section */}
         <div className="mb-4">
-          <h2 className="text-sm font-medium text-gray-700 mb-2">Transform Text</h2>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-sm font-medium text-gray-700">Transform Text</h2>
+            {usedActions.length > 0 && (
+              <button 
+                onClick={handleResetActions}
+                className="text-xs text-primary hover:underline"
+              >
+                Reset All Actions
+              </button>
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-2">
             {actionButtons.map((button) => (
               <ActionButton
@@ -189,7 +209,8 @@ const TextTransformer: React.FC = () => {
                 color={button.color}
                 label={button.label}
                 onClick={() => handleTransform(button.action)}
-                disabled={loading || !inputText.trim()}
+                disabled={loading || !inputText.trim() || usedActions.includes(button.action)}
+                used={usedActions.includes(button.action)}
               />
             ))}
           </div>
@@ -207,7 +228,8 @@ const TextTransformer: React.FC = () => {
                 color={button.color}
                 label={button.label}
                 onClick={() => handleTransform(button.action)}
-                disabled={loading || !inputText.trim()}
+                disabled={loading || !inputText.trim() || usedActions.includes(button.action)}
+                used={usedActions.includes(button.action)}
               />
             ))}
           </div>

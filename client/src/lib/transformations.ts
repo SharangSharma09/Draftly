@@ -57,16 +57,14 @@ function addMinimalEmojis(text: string, action: TransformAction): string {
   // Add an emoji at the beginning of the text
   let result = `${actionEmoji} ${text}`;
   
-  // For bullet points, add emojis to each bullet point
-  if (action === 'bullets') {
-    // Match bullet points (lines starting with •, *, -, or numbers)
-    const bulletRegex = /^([•\*\-]|\d+\.)\s+(.+)$/gm;
-    result = result.replace(bulletRegex, (match, bullet, content) => {
-      // Select a random emoji from the list
-      const randomEmoji = getBulletEmoji();
-      return `${bullet} ${randomEmoji} ${content}`;
-    });
-  }
+  // For bullet points or lists in the text, add emojis to each point
+  // Match bullet points (lines starting with •, *, -, or numbers)
+  const bulletRegex = /^([•\*\-]|\d+\.)\s+(.+)$/gm;
+  result = result.replace(bulletRegex, (match, bullet, content) => {
+    // Select a random emoji from the list
+    const randomEmoji = getBulletEmoji();
+    return `${bullet} ${randomEmoji} ${content}`;
+  });
   
   return result;
 }

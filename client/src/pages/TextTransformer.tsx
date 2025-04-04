@@ -4,6 +4,7 @@ import { ModelSelector } from '@/components/ModelSelector';
 import { ActionButton } from '@/components/ActionButton';
 import { HistoryItem } from '@/components/HistoryItem';
 import { CopyButton } from '@/components/CopyButton';
+import { ClearButton } from '@/components/ClearButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { transformText } from '@/lib/transformations';
 import { saveHistory, getHistory, clearHistoryStorage } from '@/lib/storage';
@@ -98,6 +99,10 @@ const TextTransformer: React.FC = () => {
     return `${Math.floor(hours / 24)} days ago`;
   };
 
+  const handleClearText = () => {
+    setInputText('');
+  };
+
   return (
     <div className="bg-gray-50 text-gray-800 flex flex-col h-screen">
       {/* Header section */}
@@ -114,10 +119,12 @@ const TextTransformer: React.FC = () => {
         {/* Text input section */}
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
-            <label htmlFor="input-text" className="text-sm font-medium text-gray-700">
-              Input Text
-            </label>
-            <CopyButton text={inputText} />
+            <div className="flex items-center gap-2">
+              <label htmlFor="input-text" className="text-sm font-medium text-gray-700">
+                Input Text
+              </label>
+              <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
+            </div>
           </div>
           <div className="relative">
             <Textarea
@@ -129,6 +136,9 @@ const TextTransformer: React.FC = () => {
             />
             
             {loading && <LoadingIndicator />}
+          </div>
+          <div className="flex justify-end mt-1">
+            <CopyButton text={inputText} />
           </div>
         </div>
 

@@ -106,16 +106,12 @@ const TextTransformer: React.FC = () => {
   return (
     <div className="bg-gray-50 text-gray-800 flex flex-col h-screen">
       {/* Header section */}
-      <header className="p-4 border-b border-gray-200 bg-white shadow-sm">
-        <div className="flex justify-center mb-2">
-          <h1 className="text-xl font-semibold text-gray-800">WordFlow</h1>
-        </div>
-        <div className="flex justify-center">
-          <ModelSelector
-            selectedModel={selectedModel}
-            onSelectModel={setSelectedModel}
-          />
-        </div>
+      <header className="p-4 border-b border-gray-200 flex justify-between items-center bg-white shadow-sm">
+        <h1 className="text-lg font-semibold text-gray-800">Text Tune</h1>
+        <ModelSelector
+          selectedModel={selectedModel}
+          onSelectModel={setSelectedModel}
+        />
       </header>
 
       {/* Main content area */}

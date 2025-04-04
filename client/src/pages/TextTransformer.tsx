@@ -7,7 +7,7 @@ import { CopyButton } from '@/components/CopyButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { transformText } from '@/lib/transformations';
 import { saveHistory, getHistory, clearHistoryStorage } from '@/lib/storage';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
@@ -132,23 +132,31 @@ const TextTransformer: React.FC = () => {
           </div>
         </div>
 
-        {/* Emoji option */}
+        {/* Emoji toggle */}
         <div className="mb-2">
-          <h2 className="text-sm font-medium text-gray-700 mb-2">Emoji Option</h2>
-          <RadioGroup 
-            value={emojiOption}
-            onValueChange={(value) => setEmojiOption(value as EmojiOption)}
-            className="flex space-x-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="off" id="emoji-off" />
-              <Label htmlFor="emoji-off">No Emojis</Label>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <h2 className="text-sm font-medium text-gray-700">Emoji Option</h2>
+              <p className="text-xs text-gray-500">Add minimal emojis to transformed text</p>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="on" id="emoji-on" />
-              <Label htmlFor="emoji-on">Add Minimal Emojis</Label>
-            </div>
-          </RadioGroup>
+            <Switch
+              id="emoji-toggle"
+              checked={emojiOption === 'on'}
+              onCheckedChange={(checked) => {
+                const newEmojiOption = checked ? 'on' : 'off';
+                setEmojiOption(newEmojiOption);
+                
+                // Auto-transform the text if we have text
+                if (inputText.trim()) {
+                  // Use the most recent transformation action or default to summarize
+                  const lastAction = history.length > 0 
+                    ? history[0].action 
+                    : 'summarize' as TransformAction;
+                  handleTransform(lastAction);
+                }
+              }}
+            />
+          </div>
         </div>
 
         {/* Action buttons section */}

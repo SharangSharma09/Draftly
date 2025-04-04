@@ -106,12 +106,16 @@ const TextTransformer: React.FC = () => {
   return (
     <div className="bg-gray-50 text-gray-800 flex flex-col h-screen">
       {/* Header section */}
-      <header className="p-4 border-b border-gray-200 flex justify-between items-center bg-white shadow-sm">
-        <h1 className="text-lg font-semibold text-gray-800">Text Transformer</h1>
-        <ModelSelector
-          selectedModel={selectedModel}
-          onSelectModel={setSelectedModel}
-        />
+      <header className="p-4 border-b border-gray-200 bg-white shadow-sm">
+        <div className="flex justify-center mb-2">
+          <h1 className="text-xl font-semibold text-gray-800">WordFlow</h1>
+        </div>
+        <div className="flex justify-center">
+          <ModelSelector
+            selectedModel={selectedModel}
+            onSelectModel={setSelectedModel}
+          />
+        </div>
       </header>
 
       {/* Main content area */}
@@ -121,7 +125,7 @@ const TextTransformer: React.FC = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <label htmlFor="input-text" className="text-sm font-medium text-gray-700">
-                Input Text
+                Enter Text
               </label>
               <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
             </div>
@@ -146,8 +150,8 @@ const TextTransformer: React.FC = () => {
         <div className="mb-2">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <h2 className="text-sm font-medium text-gray-700">Emoji Option</h2>
-              <p className="text-xs text-gray-500">Add minimal emojis to transformed text</p>
+              <h2 className="text-sm font-medium text-gray-700">Add Emoji</h2>
+           
             </div>
             <Switch
               id="emoji-toggle"

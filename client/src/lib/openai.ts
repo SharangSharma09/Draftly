@@ -54,25 +54,25 @@ export async function callOpenAI(
 function createSystemPrompt(action: TransformAction): string {
   switch (action) {
     case 'summarize':
-      return 'You are a helpful assistant that summarizes text concisely while preserving the key points. Create a summary that is about 30% of the original length.';
+      return 'You are a helpful assistant that summarizes text concisely while preserving the key points. Create a summary that is about 30% of the original length. Important: Do not include phrases like "This is a summary of" or "Here\'s a summary" in your response - just provide the summary directly.';
     
     case 'paraphrase':
-      return 'You are a helpful assistant that paraphrases text. Rewrite the text in a different way while keeping the same meaning. Do not add or remove information.';
+      return 'You are a helpful assistant that paraphrases text. Rewrite the text in a different way while keeping the same meaning. Do not add or remove information. Important: Do not include phrases like "This is a paraphrased version of" or "Here\'s a paraphrase" in your response - just provide the paraphrased text directly.';
     
     case 'formalize':
-      return 'You are a helpful assistant that makes text more formal and professional. Improve the language to be suitable for business or academic contexts while maintaining the original meaning.';
+      return 'You are a helpful assistant that makes text more formal and professional. Improve the language to be suitable for business or academic contexts while maintaining the original meaning. Important: Do not include phrases like "This is a formal version of" in your response - just provide the formalized text directly.';
     
     case 'simplify':
-      return 'You are a helpful assistant that simplifies complex text. Make the text easier to understand by using simpler words and shorter sentences. Target a middle-school reading level.';
+      return 'You are a helpful assistant that simplifies complex text. Make the text easier to understand by using simpler words and shorter sentences. Target a middle-school reading level. Important: Do not include phrases like "This is a simplified version of" in your response - just provide the simplified text directly.';
     
     case 'bullets':
-      return 'You are a helpful assistant that converts text into bullet points. Extract the key points and organize them as a bulleted list. Each bullet should be concise and clear.';
+      return 'You are a helpful assistant that converts text into bullet points. Extract the key points and organize them as a bulleted list. Each bullet should be concise and clear. Important: Do not include introductory phrases like "Here are the key points" - just provide the bullet points directly.';
     
     case 'expand':
-      return 'You are a helpful assistant that expands text with additional details. Elaborate on the given text by adding explanations, examples, or context that makes the content more comprehensive.';
+      return 'You are a helpful assistant that expands text with additional details. Elaborate on the given text by adding explanations, examples, or context that makes the content more comprehensive. Important: Do not include phrases like "This is an expanded version of" in your response - just provide the expanded text directly.';
     
     default:
-      return 'You are a helpful assistant. Process the following text as requested.';
+      return 'You are a helpful assistant. Process the following text as requested. Important: Do not include any introductory phrases like "This is a processed version of" in your response - just provide the processed text directly.';
   }
 }
 
@@ -85,22 +85,22 @@ function mockTransformResponse(text: string, action: TransformAction): string {
   
   switch (action) {
     case 'summarize':
-      return `This is a summarized version of: "${preview}"`;
+      return `The main points of the text focus on ${preview.substring(0, 40)}...`;
     
     case 'paraphrase':
-      return `This is a paraphrased version of: "${preview}"`;
+      return `${preview.substring(0, 40)}... [content rewritten differently]`;
     
     case 'formalize':
-      return `This is a formal version of: "${preview}"`;
+      return `${preview.substring(0, 40)}... [expressed in more formal language]`;
     
     case 'simplify':
-      return `This is a simplified version of: "${preview}"`;
+      return `${preview.substring(0, 40)}... [presented in simpler terms]`;
     
     case 'bullets':
-      return `• First key point from: "${preview}"\n• Second important point\n• Third takeaway`;
+      return `• Key point about ${preview.substring(0, 30)}\n• Important insight from the text\n• Final conclusion`;
     
     case 'expand':
-      return `This is an expanded version of: "${preview}" with additional details and explanations to provide more context and information.`;
+      return `${preview.substring(0, 40)}... [with additional context and elaboration on the main topics]`;
     
     default:
       return text;

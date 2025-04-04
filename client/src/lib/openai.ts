@@ -1,10 +1,12 @@
 import { LLMModel, TransformAction } from '@/pages/TextTransformer';
+import { TonePosition } from '@/components/ToneSelector';
 
 // Function to transform text using OpenAI API
 export async function callOpenAI(
   text: string,
   action: TransformAction,
-  model: LLMModel = 'gpt-3.5-turbo'
+  model: LLMModel = 'gpt-3.5-turbo',
+  tonePosition: TonePosition = { formality: 50, style: 50 }
 ): Promise<string> {
   // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. Do not change this unless explicitly requested by the user
   const apiModel = model === 'gpt-4o' ? 'gpt-4o' : 'gpt-3.5-turbo';
@@ -17,7 +19,7 @@ export async function callOpenAI(
   
   try {
     // Create the system prompt based on the action
-    const systemPrompt = createSystemPrompt(action);
+    const systemPrompt = createSystemPrompt(action, tonePosition);
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -50,30 +52,52 @@ export async function callOpenAI(
   }
 }
 
-// Create system prompts based on the action
-function createSystemPrompt(action: TransformAction): string {
+// Create system prompts based on the action and tone position
+function createSystemPrompt(action: TransformAction, tonePosition: TonePosition = { formality: 50, style: 50 }): string {
+  // Get tone descriptors based on the tone position
+  const formalityLevel = getFormalityDescription(tonePosition.formality);
+  const styleLevel = getStyleDescription(tonePosition.style);
+  
+  const toneInstruction = `Use a ${formalityLevel}, ${styleLevel} tone in your response.`;
+  
   switch (action) {
     case 'summarize':
-      return 'You are a helpful assistant that summarizes text concisely while preserving the key points. Create a summary that is about 30% of the original length. Important: Do not include phrases like "This is a summary of" or "Here\'s a summary" in your response - just provide the summary directly.';
+      return `You are a helpful assistant that summarizes text concisely while preserving the key points. Create a summary that is about 30% of the original length. ${toneInstruction} Important: Do not include phrases like "This is a summary of" or "Here's a summary" in your response - just provide the summary directly.`;
     
     case 'paraphrase':
-      return 'You are a helpful assistant that paraphrases text. Rewrite the text in a different way while keeping the same meaning. Do not add or remove information. Important: Do not include phrases like "This is a paraphrased version of" or "Here\'s a paraphrase" in your response - just provide the paraphrased text directly.';
+      return `You are a helpful assistant that paraphrases text. Rewrite the text in a different way while keeping the same meaning. Do not add or remove information. ${toneInstruction} Important: Do not include phrases like "This is a paraphrased version of" or "Here's a paraphrase" in your response - just provide the paraphrased text directly.`;
     
     case 'formalize':
-      return 'You are a helpful assistant that makes text more formal and professional. Improve the language to be suitable for business or academic contexts while maintaining the original meaning. Important: Do not include phrases like "This is a formal version of" in your response - just provide the formalized text directly.';
+      return `You are a helpful assistant that makes text more formal and professional. Improve the language to be suitable for business or academic contexts while maintaining the original meaning. ${toneInstruction} Important: Do not include phrases like "This is a formal version of" in your response - just provide the formalized text directly.`;
     
     case 'simplify':
-      return 'You are a helpful assistant that simplifies complex text. Make the text easier to understand by using simpler words and shorter sentences. Target a middle-school reading level. Important: Do not include phrases like "This is a simplified version of" in your response - just provide the simplified text directly.';
+      return `You are a helpful assistant that simplifies complex text. Make the text easier to understand by using simpler words and shorter sentences. Target a middle-school reading level. ${toneInstruction} Important: Do not include phrases like "This is a simplified version of" in your response - just provide the simplified text directly.`;
     
     case 'bullets':
-      return 'You are a helpful assistant that converts text into bullet points. Extract the key points and organize them as a bulleted list. Each bullet should be concise and clear. Important: Do not include introductory phrases like "Here are the key points" - just provide the bullet points directly.';
+      return `You are a helpful assistant that converts text into bullet points. Extract the key points and organize them as a bulleted list. Each bullet should be concise and clear. ${toneInstruction} Important: Do not include introductory phrases like "Here are the key points" - just provide the bullet points directly.`;
     
     case 'expand':
-      return 'You are a helpful assistant that expands text with additional details. Elaborate on the given text by adding explanations, examples, or context that makes the content more comprehensive. Important: Do not include phrases like "This is an expanded version of" in your response - just provide the expanded text directly.';
+      return `You are a helpful assistant that expands text with additional details. Elaborate on the given text by adding explanations, examples, or context that makes the content more comprehensive. ${toneInstruction} Important: Do not include phrases like "This is an expanded version of" in your response - just provide the expanded text directly.`;
     
     default:
-      return 'You are a helpful assistant. Process the following text as requested. Important: Do not include any introductory phrases like "This is a processed version of" in your response - just provide the processed text directly.';
+      return `You are a helpful assistant. Process the following text as requested. ${toneInstruction} Important: Do not include any introductory phrases like "This is a processed version of" in your response - just provide the processed text directly.`;
   }
+}
+
+// Helper function to get formality description based on the tone position
+function getFormalityDescription(formality: number): string {
+  if (formality < 25) return 'casual and conversational';
+  if (formality < 50) return 'relaxed and approachable';
+  if (formality < 75) return 'professional and polished';
+  return 'formal and academic';
+}
+
+// Helper function to get style description based on the tone position
+function getStyleDescription(style: number): string {
+  if (style < 25) return 'witty and engaging';
+  if (style < 50) return 'friendly and warm';
+  if (style < 75) return 'clear and informative';
+  return 'persuasive and authoritative';
 }
 
 // Mock implementation for when API is not available or for non-OpenAI models

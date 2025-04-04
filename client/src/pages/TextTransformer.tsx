@@ -6,6 +6,7 @@ import { HistoryItem } from '@/components/HistoryItem';
 import { CopyButton } from '@/components/CopyButton';
 import { ClearButton } from '@/components/ClearButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
+import { ToneSelector, TonePosition } from '@/components/ToneSelector';
 import { transformText } from '@/lib/transformations';
 import { saveHistory, getHistory, clearHistoryStorage } from '@/lib/storage';
 import { Switch } from "@/components/ui/switch";
@@ -28,6 +29,7 @@ const TextTransformer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<LLMModel>('gpt-3.5-turbo');
   const [emojiOption, setEmojiOption] = useState<EmojiOption>('off');
+  const [tonePosition, setTonePosition] = useState<TonePosition>({ formality: 50, style: 50 });
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   // Action button definitions with their respective icons and colors
@@ -56,7 +58,7 @@ const TextTransformer: React.FC = () => {
     setLoading(true);
     
     try {
-      const transformedText = await transformText(inputText, action, selectedModel, emojiOption);
+      const transformedText = await transformText(inputText, action, selectedModel, emojiOption, tonePosition);
       setInputText(transformedText);
       
       // Save to history
@@ -171,6 +173,33 @@ const TextTransformer: React.FC = () => {
               }}
             />
           </div>
+        </div>
+        
+        {/* Tone Selector */}
+        <div className="mb-4 mt-2">
+          <h2 className="text-sm font-medium text-gray-700 mb-2">Adjust Tone</h2>
+          <ToneSelector 
+            onChange={(newPosition) => {
+              setTonePosition(newPosition);
+              
+              // Auto-transform the text if we have text
+              if (inputText.trim() && !loading) {
+                // Use the most recent transformation action or default to summarize
+                const lastAction = history.length > 0 
+                  ? history[0].action 
+                  : 'summarize' as TransformAction;
+                  
+                // Add a small delay to prevent excessive API calls during dragging
+                const timerId = setTimeout(() => {
+                  handleTransform(lastAction);
+                }, 500);
+                
+                // Clean up the timer
+                return () => clearTimeout(timerId);
+              }
+            }} 
+            disabled={loading || !inputText.trim()}
+          />
         </div>
 
         {/* Action buttons section */}

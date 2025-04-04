@@ -1,6 +1,7 @@
 import { callOpenAI } from './openai';
 import { callPerplexity } from './perplexity';
 import { TransformAction, LLMModel, ModelProvider, EmojiOption } from '@/pages/TextTransformer';
+import { TonePosition } from '@/components/ToneSelector';
 
 // Function to determine which provider a model belongs to
 function getModelProvider(model: LLMModel): ModelProvider {
@@ -18,7 +19,8 @@ export async function transformText(
   text: string, 
   action: TransformAction, 
   model: LLMModel,
-  emojiOption: EmojiOption = 'off'
+  emojiOption: EmojiOption = 'off',
+  tonePosition: TonePosition = { formality: 50, style: 50 }
 ): Promise<string> {
   if (!text.trim()) {
     return '';
@@ -30,14 +32,14 @@ export async function transformText(
   let result = '';
   switch (provider) {
     case 'openai':
-      result = await callOpenAI(text, action, model);
+      result = await callOpenAI(text, action, model, tonePosition);
       break;
     case 'perplexity':
-      result = await callPerplexity(text, action, model);
+      result = await callPerplexity(text, action, model, tonePosition);
       break;
     default:
       // For other providers, use OpenAI as a fallback
-      result = await callOpenAI(text, action, 'gpt-3.5-turbo');
+      result = await callOpenAI(text, action, 'gpt-3.5-turbo', tonePosition);
       break;
   }
 

@@ -30,6 +30,8 @@ const TextTransformer: React.FC = () => {
   const [emojiOption, setEmojiOption] = useState<EmojiOption>('off');
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [usedActions, setUsedActions] = useState<TransformAction[]>([]);
+  const [selectedTransformAction, setSelectedTransformAction] = useState<TransformAction | null>(null);
+  const [selectedToneAction, setSelectedToneAction] = useState<TransformAction | null>(null);
 
   // Action button definitions with their respective icons and colors
   const actionButtons = [
@@ -55,19 +57,42 @@ const TextTransformer: React.FC = () => {
     loadHistory();
   }, []);
 
+  // Helper to check if an action is a transform or tone action
+  const isTransformAction = (action: TransformAction): boolean => {
+    return ['simplify', 'expand'].includes(action);
+  };
+  
+  const isToneAction = (action: TransformAction): boolean => {
+    return ['formal', 'casual', 'persuasive', 'witty'].includes(action);
+  };
+
   const handleTransform = async (action: TransformAction) => {
     if (!inputText.trim()) return;
     
     setLoading(true);
     
+    // Update selection state based on action type
+    if (isTransformAction(action)) {
+      setSelectedTransformAction(action);
+      // Deselect other transform actions
+      if (action === 'simplify') {
+        setUsedActions(prev => [...prev.filter(a => a !== 'expand'), 'simplify']);
+      } else if (action === 'expand') {
+        setUsedActions(prev => [...prev.filter(a => a !== 'simplify'), 'expand']);
+      }
+    } else if (isToneAction(action)) {
+      setSelectedToneAction(action);
+      // Deselect other tone actions
+      const otherToneActions = ['formal', 'casual', 'persuasive', 'witty'].filter(a => a !== action);
+      setUsedActions(prev => [
+        ...prev.filter(a => !otherToneActions.includes(a as TransformAction)), 
+        action
+      ]);
+    }
+    
     try {
       const transformedText = await transformText(inputText, action, selectedModel, emojiOption);
       setInputText(transformedText);
-      
-      // Mark this action as used
-      if (!usedActions.includes(action)) {
-        setUsedActions([...usedActions, action]);
-      }
       
       // Save to history
       const newEntry: HistoryEntry = {
@@ -91,6 +116,8 @@ const TextTransformer: React.FC = () => {
   
   const handleResetActions = () => {
     setUsedActions([]);
+    setSelectedTransformAction(null);
+    setSelectedToneAction(null);
   };
 
   const handleHistoryItemClick = (entry: HistoryEntry) => {
@@ -209,8 +236,9 @@ const TextTransformer: React.FC = () => {
                 color={button.color}
                 label={button.label}
                 onClick={() => handleTransform(button.action)}
-                disabled={loading || !inputText.trim() || usedActions.includes(button.action)}
+                disabled={loading || !inputText.trim()}
                 used={usedActions.includes(button.action)}
+                selected={selectedTransformAction === button.action}
               />
             ))}
           </div>
@@ -228,8 +256,9 @@ const TextTransformer: React.FC = () => {
                 color={button.color}
                 label={button.label}
                 onClick={() => handleTransform(button.action)}
-                disabled={loading || !inputText.trim() || usedActions.includes(button.action)}
+                disabled={loading || !inputText.trim()}
                 used={usedActions.includes(button.action)}
+                selected={selectedToneAction === button.action}
               />
             ))}
           </div>

@@ -10,6 +10,7 @@ interface ActionButtonProps {
   onClick: () => void;
   disabled?: boolean;
   used?: boolean;
+  selected?: boolean;
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = ({ 
@@ -19,14 +20,17 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   label, 
   onClick, 
   disabled,
-  used = false
+  used = false,
+  selected = false
 }) => {
   return (
     <Button
       variant="action"
       onClick={onClick}
       disabled={disabled}
-      className={`p-0 h-auto relative ${used ? 'opacity-60' : ''}`}
+      className={`p-0 h-auto relative ${used ? 'opacity-60' : ''} ${
+        selected ? 'ring-2 ring-blue-500 ring-offset-1' : ''
+      }`}
       data-action={action}
     >
       {used && (

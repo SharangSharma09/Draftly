@@ -12,12 +12,10 @@
     "default_title": "Text Transformer"
   },
   "permissions": [
-    "sidePanel",
-    "storage"
+    "storage",
+    "activeTab",
+    "scripting"
   ],
-  "side_panel": {
-    "default_path": "index.html"
-  },
   "background": {
     "service_worker": "src/background.ts",
     "type": "module"
@@ -25,7 +23,17 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/contentScript.ts"]
+      "js": ["src/contentScript.ts"],
+      "run_at": "document_end"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html", "*.js", "*.css", "public/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ]
 }

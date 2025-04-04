@@ -160,12 +160,10 @@ const TextTransformer: React.FC = () => {
         {/* Text input section */}
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <label htmlFor="input-text" className="text-sm font-medium text-gray-700">
-                Enter Text
-              </label>
-              <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
-            </div>
+            <label htmlFor="input-text" className="text-sm font-medium text-gray-700">
+              Enter Text
+            </label>
+            <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
           </div>
           <div className="relative">
             <Textarea
@@ -178,7 +176,7 @@ const TextTransformer: React.FC = () => {
             
             {loading && <LoadingIndicator />}
           </div>
-          <div className="flex justify-end mt-1">
+          <div className="w-full mt-1">
             <CopyButton text={inputText} />
           </div>
         </div>

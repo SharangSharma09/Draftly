@@ -114,11 +114,7 @@ const TextTransformer: React.FC = () => {
     }
   };
   
-  const handleResetActions = () => {
-    setUsedActions([]);
-    setSelectedTransformAction(null);
-    setSelectedToneAction(null);
-  };
+  // Reset functionality removed as requested
 
   const handleHistoryItemClick = (entry: HistoryEntry) => {
     setInputText(entry.text);
@@ -216,16 +212,8 @@ const TextTransformer: React.FC = () => {
         
         {/* Action buttons section */}
         <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
+          <div className="mb-2">
             <h2 className="text-sm font-medium text-gray-700">Transform Text</h2>
-            {usedActions.length > 0 && (
-              <button 
-                onClick={handleResetActions}
-                className="text-xs text-primary hover:underline"
-              >
-                Reset All Actions
-              </button>
-            )}
           </div>
           <div className="grid grid-cols-2 gap-2">
             {actionButtons.map((button) => (

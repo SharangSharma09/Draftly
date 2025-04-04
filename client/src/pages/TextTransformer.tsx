@@ -34,11 +34,9 @@ const TextTransformer: React.FC = () => {
 
   // Action button definitions with their respective icons and colors
   const actionButtons = [
-    { action: 'summarize' as TransformAction, icon: 'summarize', color: 'text-primary', label: 'Summarize' },
     { action: 'paraphrase' as TransformAction, icon: 'autorenew', color: 'text-accent', label: 'Paraphrase' },
     { action: 'formalize' as TransformAction, icon: 'business', color: 'text-secondary', label: 'Formalize' },
     { action: 'simplify' as TransformAction, icon: 'psychology', color: 'text-success', label: 'Simplify' },
-    { action: 'bullets' as TransformAction, icon: 'format_list_bulleted', color: 'text-warning', label: 'Bullet Points' },
     { action: 'expand' as TransformAction, icon: 'add_circle', color: 'text-error', label: 'Expand' },
   ];
 
@@ -164,10 +162,10 @@ const TextTransformer: React.FC = () => {
                 
                 // Auto-transform the text if we have text
                 if (inputText.trim()) {
-                  // Use the most recent transformation action or default to summarize
+                  // Use the most recent transformation action or default to paraphrase
                   const lastAction = history.length > 0 
                     ? history[0].action 
-                    : 'summarize' as TransformAction;
+                    : 'paraphrase' as TransformAction;
                   handleTransform(lastAction);
                 }
               }}
@@ -184,10 +182,10 @@ const TextTransformer: React.FC = () => {
               
               // Auto-transform the text if we have text
               if (inputText.trim() && !loading) {
-                // Use the most recent transformation action or default to summarize
+                // Use the most recent transformation action or default to paraphrase
                 const lastAction = history.length > 0 
                   ? history[0].action 
-                  : 'summarize' as TransformAction;
+                  : 'paraphrase' as TransformAction;
                   
                 // Add a small delay to prevent excessive API calls during dragging
                 const timerId = setTimeout(() => {

@@ -88,17 +88,15 @@ function createSystemPrompt(action: TransformAction, tonePosition: TonePosition 
 
 // Helper function to get formality description based on the tone position
 function getFormalityDescription(formality: number): string {
-  if (formality < 25) return 'casual and conversational';
-  if (formality < 50) return 'relaxed and approachable';
-  if (formality < 75) return 'professional and polished';
+  if (formality < 30) return 'casual and conversational';
+  if (formality < 70) return 'professional and polished';
   return 'formal and academic';
 }
 
 // Helper function to get style description based on the tone position
 function getStyleDescription(style: number): string {
-  if (style < 25) return 'witty and engaging';
-  if (style < 50) return 'friendly and warm';
-  if (style < 75) return 'clear and informative';
+  if (style < 30) return 'witty and engaging';
+  if (style < 70) return 'clear and informative';
   return 'persuasive and authoritative';
 }
 

@@ -10,6 +10,19 @@ interface ToneSelectorProps {
   disabled?: boolean;
 }
 
+// Grid positions for snapping
+const GRID_POSITIONS = [
+  { x: 16.67, y: 16.67 }, // Top-left
+  { x: 50, y: 16.67 },    // Top-center
+  { x: 83.33, y: 16.67 }, // Top-right
+  { x: 16.67, y: 50 },    // Middle-left
+  { x: 50, y: 50 },       // Middle-center
+  { x: 83.33, y: 50 },    // Middle-right
+  { x: 16.67, y: 83.33 }, // Bottom-left
+  { x: 50, y: 83.33 },    // Bottom-center
+  { x: 83.33, y: 83.33 }, // Bottom-right
+];
+
 export const ToneSelector: React.FC<ToneSelectorProps> = ({ onChange, disabled = false }) => {
   const [position, setPosition] = useState<TonePosition>({ formality: 50, style: 50 });
   const gridRef = useRef<HTMLDivElement>(null);
@@ -23,6 +36,7 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ onChange, disabled =
 
   const handleMouseUp = () => {
     isDragging.current = false;
+    snapToNearestGridPosition();
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -44,6 +58,35 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ onChange, disabled =
 
   const handleTouchEnd = () => {
     isDragging.current = false;
+    snapToNearestGridPosition();
+  };
+
+  // Snap to the nearest grid position
+  const snapToNearestGridPosition = () => {
+    // Find the nearest grid position
+    let nearestDistance = Infinity;
+    let nearestPoint = GRID_POSITIONS[4]; // Default to center
+
+    for (const point of GRID_POSITIONS) {
+      const distance = Math.sqrt(
+        Math.pow(point.x - position.formality, 2) + 
+        Math.pow(point.y - position.style, 2)
+      );
+      
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestPoint = point;
+      }
+    }
+
+    // Set to the nearest point
+    const newPosition = {
+      formality: nearestPoint.x,
+      style: nearestPoint.y,
+    };
+    
+    setPosition(newPosition);
+    onChange(newPosition);
   };
 
   const updatePosition = (e: React.MouseEvent) => {
@@ -81,7 +124,10 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ onChange, disabled =
 
   useEffect(() => {
     const handleGlobalMouseUp = () => {
-      isDragging.current = false;
+      if (isDragging.current) {
+        isDragging.current = false;
+        snapToNearestGridPosition();
+      }
     };
 
     document.addEventListener('mouseup', handleGlobalMouseUp);
@@ -91,19 +137,17 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ onChange, disabled =
       document.removeEventListener('mouseup', handleGlobalMouseUp);
       document.removeEventListener('touchend', handleGlobalMouseUp);
     };
-  }, []);
+  }, [position]); // Include position in dependencies for the snap function
 
   const getFormalityLabel = () => {
-    if (position.formality < 25) return 'Casual';
-    if (position.formality < 50) return 'Conversational';
-    if (position.formality < 75) return 'Professional';
+    if (position.formality < 30) return 'Casual';
+    if (position.formality < 70) return 'Professional';
     return 'Formal';
   };
 
   const getStyleLabel = () => {
-    if (position.style < 25) return 'Witty';
-    if (position.style < 50) return 'Friendly';
-    if (position.style < 75) return 'Informative';
+    if (position.style < 30) return 'Witty';
+    if (position.style < 70) return 'Informative';
     return 'Persuasive';
   };
 
@@ -123,15 +167,27 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ onChange, disabled =
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* X-axis grid lines */}
-        <div className="absolute w-full h-px bg-gray-200 top-1/4"></div>
-        <div className="absolute w-full h-px bg-gray-200 top-1/2"></div>
-        <div className="absolute w-full h-px bg-gray-200 top-3/4"></div>
+        {/* Create a 3x3 grid */}
+        {/* Horizontal grid lines */}
+        <div className="absolute w-full h-px bg-gray-200 top-1/3"></div>
+        <div className="absolute w-full h-px bg-gray-200 top-2/3"></div>
 
-        {/* Y-axis grid lines */}
-        <div className="absolute h-full w-px bg-gray-200 left-1/4"></div>
-        <div className="absolute h-full w-px bg-gray-200 left-1/2"></div>
-        <div className="absolute h-full w-px bg-gray-200 left-3/4"></div>
+        {/* Vertical grid lines */}
+        <div className="absolute h-full w-px bg-gray-200 left-1/3"></div>
+        <div className="absolute h-full w-px bg-gray-200 left-2/3"></div>
+
+        {/* Grid blocks - for better visibility */}
+        {GRID_POSITIONS.map((point, index) => (
+          <div
+            key={index}
+            className="absolute h-2 w-2 rounded-full bg-gray-300"
+            style={{
+              left: `${point.x}%`,
+              top: `${point.y}%`,
+              transform: 'translate(-50%, -50%)'
+            }}
+          />
+        ))}
 
         {/* Position indicator */}
         <div
@@ -145,12 +201,14 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ onChange, disabled =
         </div>
 
         {/* Axis labels */}
-        <div className="absolute -left-1 top-0 text-xs text-gray-500 transform -translate-y-full">Witty</div>
-        <div className="absolute -right-1 bottom-0 text-xs text-gray-500 transform translate-y-full text-right">Persuasive</div>
+        <div className="absolute -left-2 top-0 text-xs text-gray-500 transform -translate-y-full">Witty</div>
+        <div className="absolute left-1/2 top-0 text-xs text-gray-500 transform -translate-x-1/2 -translate-y-full">Balanced</div>
+        <div className="absolute -right-2 top-0 text-xs text-gray-500 transform -translate-y-full">Persuasive</div>
       </div>
       <div className="mt-1 flex justify-between text-xs text-gray-500">
-        <span>Witty</span>
-        <span>Persuasive</span>
+        <span>Casual</span>
+        <span>Professional</span>
+        <span>Formal</span>
       </div>
 
       {/* Current tone indicator */}

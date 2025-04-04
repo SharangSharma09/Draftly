@@ -82,6 +82,10 @@ const TextTransformer: React.FC = () => {
 
   const handleClearText = () => {
     setInputText('');
+    // Reset action states
+    setUsedActions([]);
+    setSelectedTransformAction(null);
+    setSelectedToneAction(null);
   };
 
   return (

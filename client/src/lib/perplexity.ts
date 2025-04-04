@@ -19,31 +19,49 @@ export async function callPerplexity(
     // Create the system prompt based on the action
     const systemPrompt = createSystemPrompt(action);
     
+    const requestBody = {
+      model: apiModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: text }
+      ],
+      temperature: 0.2,
+      max_tokens: 1500,
+      top_p: 0.9,
+      stream: false
+    };
+    
+    console.log('Perplexity API Request:', {
+      action,
+      model: apiModel, 
+      text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+      systemPrompt
+    });
+    
+    console.log('Perplexity API Key available:', !!import.meta.env.PERPLEXITY_API_KEY);
+    
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`
+        'Authorization': `Bearer ${import.meta.env.PERPLEXITY_API_KEY}`
       },
-      body: JSON.stringify({
-        model: apiModel,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: text }
-        ],
-        temperature: 0.2,
-        max_tokens: 1500,
-        top_p: 0.9,
-        stream: false
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('Perplexity API Error Response:', errorData);
       throw new Error(`Perplexity API error: ${errorData.error?.message || response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('Perplexity API Response:', {
+      model: data.model,
+      content: data.choices[0].message.content.substring(0, 100) + (data.choices[0].message.content.length > 100 ? '...' : ''),
+      fullResponse: data
+    });
+    
     return data.choices[0].message.content;
   } catch (error) {
     console.error('Perplexity API call failed:', error);

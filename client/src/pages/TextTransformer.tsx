@@ -16,7 +16,7 @@ export type EmojiOption = 'on' | 'off';
 const TextTransformer: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<LLMModel>('gpt-3.5-turbo');
+  const [selectedModel, setSelectedModel] = useState<LLMModel>('llama-3');
   const [emojiOption, setEmojiOption] = useState<EmojiOption>('off');
   const [usedActions, setUsedActions] = useState<TransformAction[]>([]);
   const [selectedTransformAction, setSelectedTransformAction] = useState<TransformAction | null>(null);

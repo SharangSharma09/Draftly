@@ -1,5 +1,3 @@
-import { callOpenAI } from './openai';
-import { callPerplexity } from './perplexity';
 import { TransformAction, LLMModel, ModelProvider, EmojiOption } from '@/pages/TextTransformer';
 
 // Function to determine which provider a model belongs to
@@ -20,33 +18,55 @@ export async function transformText(
   model: LLMModel,
   emojiOption: EmojiOption = 'off'
 ): Promise<string> {
+  console.log('Starting transformation with:', { 
+    text: text.substring(0, 50) + (text.length > 50 ? '...' : ''), 
+    action, 
+    model, 
+    emojiOption 
+  });
+  
   if (!text.trim()) {
+    console.log('Empty text, returning empty string');
     return '';
   }
 
-  const provider = getModelProvider(model);
-  
-  // Route to the appropriate API based on the model provider
-  let result = '';
-  switch (provider) {
-    case 'openai':
-      result = await callOpenAI(text, action, model);
-      break;
-    case 'perplexity':
-      result = await callPerplexity(text, action, model);
-      break;
-    default:
-      // For other providers, use OpenAI as a fallback
-      result = await callOpenAI(text, action, 'gpt-3.5-turbo');
-      break;
+  try {
+    // Call the server API instead of directly calling the AI providers
+    console.log('Calling server API endpoint');
+    const response = await fetch('/api/transform', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text,
+        action,
+        model,
+        emojiOption
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Server API Error:', errorData);
+      throw new Error(`Server API error: ${errorData.message || errorData.error || response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.transformed) {
+      console.error('Missing transformed text in response:', data);
+      throw new Error('Server returned an invalid response');
+    }
+    
+    console.log('Server API response received, length:', data.transformed.length);
+    console.log('First 100 characters:', data.transformed.substring(0, 100) + (data.transformed.length > 100 ? '...' : ''));
+    
+    return data.transformed;
+  } catch (error: any) {
+    console.error('Error in transformText:', error);
+    return `Error: ${error.message || 'Unknown error'}. Please try again.`;
   }
-
-  // Add emojis if the option is turned on
-  if (emojiOption === 'on') {
-    result = addMinimalEmojis(result, action);
-  }
-
-  return result;
 }
 
 // Function to add minimal, appropriate emojis based on the transformation action

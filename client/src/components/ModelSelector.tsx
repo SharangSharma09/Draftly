@@ -15,10 +15,6 @@ type ModelOption = {
 };
 
 const models: ModelOption[] = [
-  // OpenAI models
-  { value: 'gpt-3.5-turbo', label: 'GPT-3.5', provider: 'openai', icon: 'bolt' },
-  { value: 'gpt-4o', label: 'GPT-4o', provider: 'openai', icon: 'stars' },
-  
   // Perplexity models
   { value: 'llama-3', label: 'Llama 3 (Small)', provider: 'perplexity', icon: 'smart_toy' },
   { value: 'llama-3-70b', label: 'Llama 3 (Large)', provider: 'perplexity', icon: 'smart_toy' },
@@ -36,7 +32,6 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
     return models.filter(model => model.provider === provider);
   };
 
-  const openaiModels = getModelsByProvider('openai');
   const perplexityModels = getModelsByProvider('perplexity');
   const otherModels = getModelsByProvider('other');
 
@@ -50,22 +45,8 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
             <span className="material-icons text-sm ml-1">expand_more</span>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[180px]">
-          {/* OpenAI Models */}
-          <DropdownMenuLabel className="text-xs font-bold">OpenAI</DropdownMenuLabel>
-          {openaiModels.map((model) => (
-            <DropdownMenuItem 
-              key={model.value} 
-              onClick={() => onSelectModel(model.value)}
-              className={selectedModel === model.value ? 'bg-gray-100' : ''}
-            >
-              {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
-              {model.label}
-            </DropdownMenuItem>
-          ))}
-          
+        <DropdownMenuContent className="w-[180px]">          
           {/* Perplexity Models */}
-          <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs font-bold">Perplexity</DropdownMenuLabel>
           {perplexityModels.map((model) => (
             <DropdownMenuItem 

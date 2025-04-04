@@ -19,29 +19,47 @@ export async function callOpenAI(
     // Create the system prompt based on the action
     const systemPrompt = createSystemPrompt(action);
     
+    const requestBody = {
+      model: apiModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: text }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500
+    };
+    
+    console.log('OpenAI API Request:', {
+      action,
+      model: apiModel,
+      text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+      systemPrompt
+    });
+    
+    console.log('OpenAI API Key available:', !!import.meta.env.OPENAI_API_KEY);
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+        'Authorization': `Bearer ${import.meta.env.OPENAI_API_KEY}`
       },
-      body: JSON.stringify({
-        model: apiModel,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: text }
-        ],
-        temperature: 0.7,
-        max_tokens: 1500
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('OpenAI API Error Response:', errorData);
       throw new Error(`OpenAI API error: ${errorData.error?.message || response.statusText}`);
     }
 
     const data = await response.json();
+    console.log('OpenAI API Response:', {
+      model: data.model,
+      content: data.choices[0].message.content.substring(0, 100) + (data.choices[0].message.content.length > 100 ? '...' : ''),
+      fullResponse: data
+    });
+    
     return data.choices[0].message.content;
   } catch (error) {
     console.error('OpenAI API call failed:', error);

@@ -7,10 +7,13 @@ import { CopyButton } from '@/components/CopyButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { transformText } from '@/lib/transformations';
 import { saveHistory, getHistory, clearHistoryStorage } from '@/lib/storage';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
 export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
 export type TransformAction = 'summarize' | 'paraphrase' | 'formalize' | 'simplify' | 'bullets' | 'expand';
+export type EmojiOption = 'on' | 'off';
 
 export interface HistoryEntry {
   id: string;
@@ -23,6 +26,7 @@ const TextTransformer: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<LLMModel>('gpt-3.5-turbo');
+  const [emojiOption, setEmojiOption] = useState<EmojiOption>('off');
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   // Action button definitions with their respective icons and colors
@@ -51,7 +55,7 @@ const TextTransformer: React.FC = () => {
     setLoading(true);
     
     try {
-      const transformedText = await transformText(inputText, action, selectedModel);
+      const transformedText = await transformText(inputText, action, selectedModel, emojiOption);
       setInputText(transformedText);
       
       // Save to history
@@ -126,6 +130,25 @@ const TextTransformer: React.FC = () => {
             
             {loading && <LoadingIndicator />}
           </div>
+        </div>
+
+        {/* Emoji option */}
+        <div className="mb-2">
+          <h2 className="text-sm font-medium text-gray-700 mb-2">Emoji Option</h2>
+          <RadioGroup 
+            value={emojiOption}
+            onValueChange={(value) => setEmojiOption(value as EmojiOption)}
+            className="flex space-x-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="off" id="emoji-off" />
+              <Label htmlFor="emoji-off">No Emojis</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="on" id="emoji-on" />
+              <Label htmlFor="emoji-on">Add Minimal Emojis</Label>
+            </div>
+          </RadioGroup>
         </div>
 
         {/* Action buttons section */}

@@ -143,7 +143,7 @@ const TextTransformer: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 text-gray-800 flex flex-col h-screen">
+    <div className="bg-white text-gray-800 flex flex-col h-screen">
       {/* Header section */}
       <header className="p-4 border-b border-gray-200 bg-white shadow-sm">
         <div className="flex justify-center mb-2">
@@ -161,12 +161,6 @@ const TextTransformer: React.FC = () => {
       <main className="flex-1 p-4 flex flex-col gap-4 overflow-auto">
         {/* Text input section */}
         <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center">
-            <label htmlFor="input-text" className="text-sm font-medium text-gray-700">
-              Enter Text
-            </label>
-            <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
-          </div>
           <div className="relative">
             <Textarea
               id="input-text"
@@ -188,8 +182,8 @@ const TextTransformer: React.FC = () => {
                 setSelectionStart(target.selectionStart);
                 setSelectionEnd(target.selectionEnd);
               }}
-              placeholder="Paste your text here... Select text to transform only that portion."
-              className="w-full h-52"
+              placeholder="Enter your text here"
+              className="w-full h-52 bg-[#F6F6F6]"
             />
             
             {loading && <LoadingIndicator />}
@@ -203,8 +197,9 @@ const TextTransformer: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="w-full mt-1">
+          <div className="w-full mt-1 flex gap-2">
             <CopyButton text={inputText} />
+            <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
           </div>
         </div>
 

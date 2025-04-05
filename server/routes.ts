@@ -181,7 +181,7 @@ function createSystemPrompt(action: string): string {
 
 // Function to add emojis
 function addEmojis(text: string, action: string): string {
-  // Get emoji that matches the action
+  // Get emoji that matches the action based on transformation type
   const actionEmoji = getActionEmoji(action);
   
   // Add an emoji at the beginning of the text
@@ -191,9 +191,21 @@ function addEmojis(text: string, action: string): string {
   // Match bullet points (lines starting with •, *, -, or numbers)
   const bulletRegex = /^([•\*\-]|\d+\.)\s+(.+)$/gm;
   result = result.replace(bulletRegex, (match, bullet, content) => {
-    // Select a random emoji from the list
+    // Select a relevant emoji for the bullet point
     const randomEmoji = getBulletEmoji();
     return `${bullet} ${randomEmoji} ${content}`;
+  });
+  
+  // Add contextual emojis at the end of sentences
+  // Simple regex to match the end of sentences
+  const sentenceEndRegex = /([.!?])\s+/g;
+  result = result.replace(sentenceEndRegex, (match, punctuation) => {
+    // Don't add emoji to every sentence - approximately 1 in 3 sentences
+    if (Math.random() < 0.35) {
+      const contextEmoji = getContextEmoji();
+      return `${punctuation} ${contextEmoji} `;
+    }
+    return match;
   });
   
   return result;
@@ -224,4 +236,17 @@ function getBulletEmoji(): string {
   const bulletEmojis = ['✅', '👉', '📌', '💡', '🔑', '📊', '🎯', '📈'];
   const randomIndex = Math.floor(Math.random() * bulletEmojis.length);
   return bulletEmojis[randomIndex];
+}
+
+// Get a contextual emoji for sentences
+function getContextEmoji(): string {
+  // Variety of common emojis that would fit well at the end of sentences
+  const contextEmojis = [
+    '😊', '👍', '✨', '🙌', '💯', '🔥', '💫', '🌟', 
+    '💭', '💡', '🤔', '📝', '👀', '🚀', '🎯', '💪',
+    '🌈', '🍀', '🌺', '🎵', '📚', '🎮', '💻', '📱',
+    '🏆', '🏅', '🎓', '🧠', '💼', '👏', '🌞', '🌠'
+  ];
+  const randomIndex = Math.floor(Math.random() * contextEmojis.length);
+  return contextEmojis[randomIndex];
 }

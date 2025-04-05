@@ -5,8 +5,8 @@ import { ActionButton } from '@/components/ActionButton';
 import { CopyButton } from '@/components/CopyButton';
 import { ClearButton } from '@/components/ClearButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
+import { EmojiToggle } from '@/components/EmojiToggle';
 import { transformText } from '@/lib/transformations';
-import { Switch } from "@/components/ui/switch";
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
 export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
@@ -86,6 +86,8 @@ const TextTransformer: React.FC = () => {
     setUsedActions([]);
     setSelectedTransformAction(null);
     setSelectedToneAction(null);
+    // Reset emoji toggle to OFF
+    setEmojiOption('off');
   };
 
   return (
@@ -131,27 +133,21 @@ const TextTransformer: React.FC = () => {
 
         {/* Emoji toggle */}
         <div className="mb-2">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <h2 className="text-sm font-medium text-gray-700">Add Emoji</h2>
-           
-            </div>
-            <Switch
-              id="emoji-toggle"
-              checked={emojiOption === 'on'}
-              onCheckedChange={(checked) => {
-                const newEmojiOption = checked ? 'on' : 'off';
-                setEmojiOption(newEmojiOption);
-                
-                // Auto-transform the text if we have text
-                if (inputText.trim()) {
-                  // Use the active transformation action or default to simplify
-                  const lastAction = selectedTransformAction || selectedToneAction || 'simplify' as TransformAction;
-                  handleTransform(lastAction);
-                }
-              }}
-            />
-          </div>
+          <EmojiToggle
+            enabled={emojiOption === 'on'}
+            onChange={(checked: boolean) => {
+              const newEmojiOption = checked ? 'on' : 'off';
+              setEmojiOption(newEmojiOption);
+              
+              // Auto-transform the text if we have text
+              if (inputText.trim()) {
+                // Use the active transformation action or default to simplify
+                const lastAction = selectedTransformAction || selectedToneAction || 'simplify' as TransformAction;
+                handleTransform(lastAction);
+              }
+            }}
+            disabled={loading}
+          />
         </div>
         
         {/* Action buttons section */}

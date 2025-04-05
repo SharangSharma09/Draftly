@@ -114,6 +114,10 @@ function getActionEmoji(action: TransformAction): string {
       return '🎯';
     case 'witty':
       return '😄';
+    case 'add_emoji':
+      return '😎';
+    case 'remove_emoji':
+      return '🧹';
     default:
       return '✨';
   }

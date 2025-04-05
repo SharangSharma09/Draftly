@@ -10,7 +10,7 @@ import { transformText } from '@/lib/transformations';
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
 export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
-export type TransformAction = 'simplify' | 'expand' | 'formal' | 'casual' | 'persuasive' | 'witty';
+export type TransformAction = 'simplify' | 'expand' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'add_emoji' | 'remove_emoji';
 export type EmojiOption = 'on' | 'off';
 
 const TextTransformer: React.FC = () => {

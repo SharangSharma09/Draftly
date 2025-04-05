@@ -14,26 +14,19 @@ export const EmojiToggle: React.FC<EmojiToggleProps> = ({
   disabled = false 
 }) => {
   return (
-    <div className="flex items-center space-x-2">
-      <div className="flex flex-col">
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="emoji-toggle" 
-            checked={enabled}
-            onCheckedChange={onChange}
-            disabled={disabled}
-          />
-          <Label 
-            htmlFor="emoji-toggle" 
-            className={`text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'}`}
-          >
-            Add Emojis
-          </Label>
-        </div>
-        <p className="text-xs text-gray-500 mt-1 ml-10">
-          Adds minimal, contextual emojis to enhance readability
-        </p>
-      </div>
+    <div className="flex items-center justify-between">
+      <Label 
+        htmlFor="emoji-toggle" 
+        className={`text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'}`}
+      >
+        Add Emojis
+      </Label>
+      <Switch 
+        id="emoji-toggle" 
+        checked={enabled}
+        onCheckedChange={onChange}
+        disabled={disabled}
+      />
     </div>
   );
 };

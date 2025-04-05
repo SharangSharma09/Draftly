@@ -34,11 +34,10 @@
     background-color: white;
   }
 
-  /* Ensure dropdown appears correctly in the sidebar */
-  [data-radix-popper-content-wrapper] {
-    position: absolute;
-    width: auto !important;
-    z-index: 1001;
+  /* Additional styles to ensure proper positioning in the sidebar */
+  button, .dropdown-content {
+    position: relative;
+    z-index: 50;
   }
 
   /* Custom scrollbar */

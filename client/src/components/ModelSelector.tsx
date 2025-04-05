@@ -1,5 +1,4 @@
-import React from 'react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import React, { useState } from 'react';
 import { LLMModel, ModelProvider } from '@/pages/TextTransformer';
 
 interface ModelSelectorProps {
@@ -29,6 +28,7 @@ const models: ModelOption[] = [
 ];
 
 export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onSelectModel }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const selectedOption = models.find(model => model.value === selectedModel) || models[0];
   
   // Group models by provider
@@ -39,62 +39,80 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
   const perplexityModels = getModelsByProvider('perplexity');
   const openaiModels = getModelsByProvider('openai');
   const otherModels = getModelsByProvider('other');
-
+  
   return (
     <div className="relative w-full">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="w-full">
-          <div className="w-full bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary appearance-none cursor-pointer flex items-center justify-between">
-            <div className="flex items-center">
-              {selectedOption.icon && <span className="material-icons text-sm mr-1">{selectedOption.icon}</span>}
-              {selectedOption.label}
-            </div>
-            <span className="material-icons text-sm">expand_more</span>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary appearance-none cursor-pointer flex items-center justify-between"
+      >
+        <div className="flex items-center">
+          {selectedOption.icon && <span className="material-icons text-sm mr-1">{selectedOption.icon}</span>}
+          {selectedOption.label}
+        </div>
+        <span className="material-icons text-sm">{isOpen ? 'expand_less' : 'expand_more'}</span>
+      </button>
+      
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-md z-50">
+          <div className="p-2">
+            <div className="text-xs font-bold mb-1">Perplexity</div>
+            {perplexityModels.map((model) => (
+              <div
+                key={model.value}
+                onClick={() => {
+                  onSelectModel(model.value);
+                  setIsOpen(false);
+                }}
+                className={`py-1 px-2 rounded-md cursor-pointer flex items-center hover:bg-gray-100 ${
+                  selectedModel === model.value ? 'bg-gray-100' : ''
+                }`}
+              >
+                {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
+                {model.label}
+              </div>
+            ))}
+            
+            <div className="h-px bg-gray-200 my-2"></div>
+            
+            <div className="text-xs font-bold mb-1">OpenAI</div>
+            {openaiModels.map((model) => (
+              <div
+                key={model.value}
+                onClick={() => {
+                  onSelectModel(model.value);
+                  setIsOpen(false);
+                }}
+                className={`py-1 px-2 rounded-md cursor-pointer flex items-center hover:bg-gray-100 ${
+                  selectedModel === model.value ? 'bg-gray-100' : ''
+                }`}
+              >
+                {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
+                {model.label}
+              </div>
+            ))}
+            
+            <div className="h-px bg-gray-200 my-2"></div>
+            
+            <div className="text-xs font-bold mb-1">Other Models</div>
+            {otherModels.map((model) => (
+              <div
+                key={model.value}
+                onClick={() => {
+                  onSelectModel(model.value);
+                  setIsOpen(false);
+                }}
+                className={`py-1 px-2 rounded-md cursor-pointer flex items-center hover:bg-gray-100 ${
+                  selectedModel === model.value ? 'bg-gray-100' : ''
+                }`}
+              >
+                {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
+                {model.label}
+              </div>
+            ))}
           </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="bg-white border rounded-md shadow-md z-50" side="bottom" align="end">          
-          {/* Perplexity Models */}
-          <DropdownMenuLabel className="text-xs font-bold">Perplexity</DropdownMenuLabel>
-          {perplexityModels.map((model) => (
-            <DropdownMenuItem 
-              key={model.value} 
-              onClick={() => onSelectModel(model.value)}
-              className={selectedModel === model.value ? 'bg-gray-100' : ''}
-            >
-              {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
-              {model.label}
-            </DropdownMenuItem>
-          ))}
-          
-          {/* OpenAI Models */}
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel className="text-xs font-bold">OpenAI</DropdownMenuLabel>
-          {openaiModels.map((model) => (
-            <DropdownMenuItem 
-              key={model.value} 
-              onClick={() => onSelectModel(model.value)}
-              className={selectedModel === model.value ? 'bg-gray-100' : ''}
-            >
-              {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
-              {model.label}
-            </DropdownMenuItem>
-          ))}
-          
-          {/* Other Models */}
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel className="text-xs font-bold">Other Models</DropdownMenuLabel>
-          {otherModels.map((model) => (
-            <DropdownMenuItem 
-              key={model.value} 
-              onClick={() => onSelectModel(model.value)}
-              className={selectedModel === model.value ? 'bg-gray-100' : ''}
-            >
-              {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
-              {model.label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </div>
+      )}
     </div>
   );
 };

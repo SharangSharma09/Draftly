@@ -54,9 +54,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json({ transformed: result });
     } catch (error: any) {
       console.error('Error in /api/transform:', error);
-      return res.status(500).json({ 
+      
+      // Determine the HTTP status code based on the error
+      let statusCode = 500;
+      if (error.message?.includes('API key')) {
+        statusCode = 401; // Unauthorized
+      }
+      
+      // Create a more user-friendly error message
+      let clientMessage = error.message || 'Unknown error';
+      
+      // Format API key errors to be more helpful
+      if (error.message?.includes('OpenAI API key')) {
+        clientMessage = 'OpenAI API key is invalid or missing. Please check your OpenAI API key.';
+      } else if (error.message?.includes('Perplexity API key')) {
+        clientMessage = 'Perplexity API key is invalid or missing. Please check your Perplexity API key.';
+      }
+      
+      return res.status(statusCode).json({ 
         error: 'Failed to transform text',
-        message: error.message || 'Unknown error'
+        message: clientMessage
       });
     }
   });
@@ -66,7 +83,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Check API keys without exposing them
     const perplexityKeyValid = process.env.PERPLEXITY_API_KEY?.startsWith('pplx-') || false;
     const openaiKeyExists = !!process.env.OPENAI_API_KEY;
-    const openaiKeyValid = openaiKeyExists && (process.env.OPENAI_API_KEY?.length ?? 0) > 20;
+    const openaiKeyValid = openaiKeyExists && 
+                          process.env.OPENAI_API_KEY?.startsWith('sk-') && 
+                          (process.env.OPENAI_API_KEY?.length ?? 0) > 20;
     
     const apiKeys = {
       perplexity: {
@@ -281,10 +300,10 @@ async function callOpenAIApi(text: string, action: string, model: string): Promi
   console.log('OPENAI_API_KEY length:', apiKeyLength);
   
   try {
-    // Verify we have the OpenAI API key
+    // Verify we have the correct OpenAI API key format
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error('OpenAI API key is missing. Please set the OPENAI_API_KEY environment variable.');
+    if (!apiKey || !apiKey.startsWith('sk-')) {
+      throw new Error('Invalid OpenAI API key format. OpenAI keys should start with sk-');
     }
     
     // Initialize the OpenAI client

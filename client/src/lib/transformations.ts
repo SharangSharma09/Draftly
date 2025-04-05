@@ -49,6 +49,16 @@ export async function transformText(
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Server API Error:', errorData);
+      
+      // Check if it's an API key error
+      if (errorData.message && errorData.message.includes('API key')) {
+        if (errorData.message.includes('OpenAI')) {
+          throw new Error(`OpenAI API key error. Please set a valid OpenAI API key.`);
+        } else if (errorData.message.includes('Perplexity')) {
+          throw new Error(`Perplexity API key error. Please set a valid Perplexity API key.`);
+        }
+      }
+      
       throw new Error(`Server API error: ${errorData.message || errorData.error || response.statusText}`);
     }
     

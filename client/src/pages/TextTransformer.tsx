@@ -183,7 +183,7 @@ const TextTransformer: React.FC = () => {
                 setSelectionEnd(target.selectionEnd);
               }}
               placeholder="Enter your text here"
-              className="w-full h-52 bg-[#F6F6F6]"
+              className="w-full h-52 bg-[#F6F6F6] border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
             
             {loading && <LoadingIndicator />}

@@ -61,7 +61,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={`px-0 py-3 h-auto relative rounded-xl ${
-        selected ? 'ring-2 ring-blue-500 ring-offset-1' : ''
+        selected ? 'ring-2 ring-[#6668FF] ring-offset-0' : ''
       }`}
       data-action={action}
     >

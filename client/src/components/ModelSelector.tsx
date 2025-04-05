@@ -65,7 +65,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
                   setIsOpen(false);
                 }}
                 className={`py-1 px-2 rounded-lg cursor-pointer flex items-center hover:bg-gray-100 ${
-                  selectedModel === model.value ? 'bg-gray-100' : ''
+                  selectedModel === model.value ? 'bg-[#6668FF]/10 text-[#6668FF] font-medium' : ''
                 }`}
               >
                 {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
@@ -84,7 +84,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
                   setIsOpen(false);
                 }}
                 className={`py-1 px-2 rounded-lg cursor-pointer flex items-center hover:bg-gray-100 ${
-                  selectedModel === model.value ? 'bg-gray-100' : ''
+                  selectedModel === model.value ? 'bg-[#6668FF]/10 text-[#6668FF] font-medium' : ''
                 }`}
               >
                 {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
@@ -103,7 +103,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
                   setIsOpen(false);
                 }}
                 className={`py-1 px-2 rounded-lg cursor-pointer flex items-center hover:bg-gray-100 ${
-                  selectedModel === model.value ? 'bg-gray-100' : ''
+                  selectedModel === model.value ? 'bg-[#6668FF]/10 text-[#6668FF] font-medium' : ''
                 }`}
               >
                 {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}

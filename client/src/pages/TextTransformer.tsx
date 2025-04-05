@@ -30,13 +30,13 @@ const TextTransformer: React.FC = () => {
   // Action button definitions with their respective emoji icons and colors
   const actionButtons = [
     { action: 'simplify' as TransformAction, icon: '✂️', color: 'text-success', label: 'Shorten', useEmoji: true, rotation: '-90deg' },
-    { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '0deg', flip: 'horizontal' },
+    { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '0deg', flip: 'horizontal' as const },
     { action: 'rephrase' as TransformAction, icon: '🔄', color: 'text-info', label: 'Rephrase', useEmoji: true },
   ];
   
   // Tone button definitions
   const toneButtons = [
-    { action: 'formal' as TransformAction, icon: '🧐', color: 'text-primary', label: 'Formal' },
+    { action: 'formal' as TransformAction, icon: '👨🏻‍💻', color: 'text-primary', label: 'Formal' },
     { action: 'casual' as TransformAction, icon: '😎', color: 'text-accent', label: 'Casual' },
     { action: 'persuasive' as TransformAction, icon: '😏', color: 'text-warning', label: 'Persuasive' },
     { action: 'witty' as TransformAction, icon: '🦊', color: 'text-secondary', label: 'Witty' },
@@ -51,6 +51,7 @@ const TextTransformer: React.FC = () => {
   
   const isToneAction = (action: TransformAction): boolean => {
     return ['formal', 'casual', 'persuasive', 'witty', 'empathetic', 'direct'].includes(action);
+    // Note: We still use 'direct' in the code since that's the action value, even though the label is "Knowledgable"
   };
 
   const handleTransform = async (action: TransformAction) => {

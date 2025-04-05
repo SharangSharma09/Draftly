@@ -34,18 +34,11 @@
     background-color: white;
   }
 
-  /* Position dropdown relative to the panel */
+  /* Ensure dropdown appears correctly in the sidebar */
   [data-radix-popper-content-wrapper] {
-    position: fixed !important;
-    left: auto !important;
-    right: 10px !important;
-    width: calc(20vw - 20px) !important;
-  }
-  
-  /* Ensure dropdown content stays within the panel */
-  [data-radix-dropdown-menu-content] {
-    max-width: calc(20vw - 20px) !important;
-    width: 100% !important;
+    position: absolute;
+    width: auto !important;
+    z-index: 1001;
   }
 
   /* Custom scrollbar */

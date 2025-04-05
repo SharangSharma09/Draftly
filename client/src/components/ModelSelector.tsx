@@ -52,7 +52,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
             <span className="material-icons text-sm">expand_more</span>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[calc(20vw-2rem)] min-w-[200px]" side="bottom" sideOffset={5} align="center">          
+        <DropdownMenuContent side="bottom" sideOffset={5} align="center">          
           {/* Perplexity Models */}
           <DropdownMenuLabel className="text-xs font-bold">Perplexity</DropdownMenuLabel>
           {perplexityModels.map((model) => (

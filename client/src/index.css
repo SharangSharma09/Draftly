@@ -34,20 +34,18 @@
     background-color: white;
   }
 
-  /* Prevent dropdown from causing shift */
+  /* Position dropdown relative to the panel */
   [data-radix-popper-content-wrapper] {
-    position: absolute !important;
-    transform: none !important;
-    top: auto !important;
+    position: fixed !important;
     left: auto !important;
-    width: auto !important;
+    right: 10px !important;
+    width: calc(20vw - 20px) !important;
   }
   
-  /* Ensure the dropdown content stays within the panel */
+  /* Ensure dropdown content stays within the panel */
   [data-radix-dropdown-menu-content] {
     max-width: calc(20vw - 20px) !important;
-    width: calc(20vw - 20px) !important;
-    margin-left: 10px !important;
+    width: 100% !important;
   }
 
   /* Custom scrollbar */

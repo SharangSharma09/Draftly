@@ -183,7 +183,7 @@ const TextTransformer: React.FC = () => {
                 setSelectionEnd(target.selectionEnd);
               }}
               placeholder="Enter your text here"
-              className="w-full h-52 bg-[#F6F6F6] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl"
+              className="w-full h-52 bg-[#F6F6F6] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl text-xl"
             />
             
             {loading && <LoadingIndicator />}
@@ -273,7 +273,7 @@ const TextTransformer: React.FC = () => {
         {/* Action buttons section */}
         <div className="mb-4">
           <div className="mb-2">
-            <h2 className="text-sm font-medium text-gray-700">Transform Text</h2>
+            <h2 className="text-sm font-medium text-gray-700">TRANSFORM TEXT</h2>
           </div>
           <div className="grid grid-cols-3 gap-2">
             {actionButtons.map((button) => (
@@ -297,7 +297,7 @@ const TextTransformer: React.FC = () => {
 
         {/* Tone buttons section */}
         <div className="mb-4">
-          <h2 className="text-sm font-medium text-gray-700 mb-2">Adjust Tone</h2>
+          <h2 className="text-sm font-medium text-gray-700 mb-2">ADJUST TONE</h2>
           <div className="grid grid-cols-3 gap-2">
             {toneButtons.map((button) => (
               <ActionButton

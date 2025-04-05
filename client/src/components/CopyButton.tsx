@@ -29,8 +29,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
       className={`flex-1 ${copied ? "active" : ""}`}
       disabled={!text.trim()}
     >
-      <span className="material-icons text-sm">content_copy</span>
-      <span>{copied ? "Copied!" : "Copy Text"}</span>
+      <span>{copied ? "Copied!" : "Copy"}</span>
     </Button>
   );
 };

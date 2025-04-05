@@ -12,10 +12,9 @@ export const ClearButton: React.FC<ClearButtonProps> = ({ onClick, disabled }) =
       variant="outline"
       onClick={onClick}
       disabled={disabled}
-      className="text-gray-500 hover:text-gray-700 min-w-[100px]"
+      className="text-gray-500 hover:text-gray-700 aspect-square h-10 w-10 p-0 flex items-center justify-center"
     >
       <span className="material-icons text-sm">delete_outline</span>
-      <span className="ml-1">Clear</span>
     </Button>
   );
 };

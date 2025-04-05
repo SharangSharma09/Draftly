@@ -30,7 +30,7 @@ const TextTransformer: React.FC = () => {
   // Action button definitions with their respective emoji icons and colors
   const actionButtons = [
     { action: 'simplify' as TransformAction, icon: '✂️', color: 'text-success', label: 'Shorten', useEmoji: true, rotation: '-90deg' },
-    { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '-180deg' },
+    { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '0deg' },
     { action: 'rephrase' as TransformAction, icon: '🔄', color: 'text-info', label: 'Rephrase', useEmoji: true },
   ];
   

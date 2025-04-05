@@ -28,30 +28,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Route to the appropriate API based on the model
-      let result = '';
+      // Handle emoji functionality through language models instead of client-side processing
+      let actionToUse = action;
       
-      if (['llama-3', 'llama-3-70b'].includes(model)) {
-        // Call Perplexity API
-        result = await callPerplexityApi(text, action, model);
-      } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
-        // Call OpenAI API
-        result = await callOpenAIApi(text, action, model);
-      } else if (['claude-2', 'palm'].includes(model)) {
-        // For mock models, use Perplexity API but log the requested model
-        console.log(`Mock model ${model} requested, using Perplexity API instead`);
-        result = await callPerplexityApi(text, action, 'llama-3');
-      } else {
-        return res.status(400).json({ error: 'Invalid model specified' });
-      }
-      
-      // Add emojis if the option is turned on
+      // Convert emoji toggle to the appropriate action
       if (emojiOption === 'on') {
-        result = addEmojis(result, action);
+        actionToUse = 'add_emoji';
+      } else if (emojiOption === 'off') {
+        // We'll let the server-side determine if emojis need to be removed
+        actionToUse = 'remove_emoji';
       }
       
-      // Return the transformed text
-      return res.json({ transformed: result });
+      // For transformation actions, first apply the transformation and then apply emoji action if needed
+      if (['simplify', 'expand', 'formal', 'casual', 'persuasive', 'witty'].includes(action) && emojiOption === 'on') {
+        let transformedText = '';
+        
+        // First do the primary transformation
+        if (['llama-3', 'llama-3-70b'].includes(model)) {
+          transformedText = await callPerplexityApi(text, action, model);
+        } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
+          transformedText = await callOpenAIApi(text, action, model);
+        } else if (['claude-2', 'palm'].includes(model)) {
+          console.log(`Mock model ${model} requested, using Perplexity API instead`);
+          transformedText = await callPerplexityApi(text, action, 'llama-3');
+        } else {
+          return res.status(400).json({ error: 'Invalid model specified' });
+        }
+        
+        // Then apply emoji processing to the result
+        let result = '';
+        if (['llama-3', 'llama-3-70b'].includes(model)) {
+          result = await callPerplexityApi(transformedText, 'add_emoji', model);
+        } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
+          result = await callOpenAIApi(transformedText, 'add_emoji', model);
+        } else {
+          result = await callPerplexityApi(transformedText, 'add_emoji', 'llama-3');
+        }
+        
+        return res.json({ transformed: result });
+      } else {
+        // For direct emoji operations or normal transformations without emoji processing
+        let result = '';
+        
+        if (['llama-3', 'llama-3-70b'].includes(model)) {
+          result = await callPerplexityApi(text, actionToUse, model);
+        } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
+          result = await callOpenAIApi(text, actionToUse, model);
+        } else if (['claude-2', 'palm'].includes(model)) {
+          console.log(`Mock model ${model} requested, using Perplexity API instead`);
+          result = await callPerplexityApi(text, actionToUse, 'llama-3');
+        } else {
+          return res.status(400).json({ error: 'Invalid model specified' });
+        }
+        
+        return res.json({ transformed: result });
+      }
     } catch (error: any) {
       console.error('Error in /api/transform:', error);
       
@@ -265,6 +296,30 @@ TASK: Transform the text to make it more witty and entertaining.
 - Avoid sarcasm that might be misinterpreted
 - Keep the original meaning while making it more entertaining
 - Keep the character count same as the input text
+
+${baseInstruction}`;
+    
+    case 'add_emoji':
+      return `You are an expert text editor which adds appropriate emojis to enhance the text.
+
+TASK: Add suitable, contextual emojis to the provided text.
+- Insert relevant emojis next to key nouns, verbs, and concepts
+- Use emojis that match the tone and topic of the text
+- Place emojis strategically to enhance readability and engagement
+- Don't overuse emojis - aim for balance (approximately 1 emoji per sentence or idea)
+- Do not add emojis if the text already contains them
+- Do not change any of the original text content
+
+${baseInstruction}`;
+    
+    case 'remove_emoji':
+      return `You are an expert text editor specialized in text cleanup.
+
+TASK: Remove all emojis from the provided text.
+- Delete any and all emoji characters present in the text
+- Preserve all other characters, formatting, and content exactly as in the original
+- If there are no emojis in the text, return the text unchanged
+- Ensure proper spacing after emoji removal (no double spaces)
 
 ${baseInstruction}`;
     

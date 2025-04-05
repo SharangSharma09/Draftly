@@ -141,21 +141,24 @@ const TextTransformer: React.FC = () => {
               const newEmojiOption = checked ? 'on' : 'off';
               setEmojiOption(newEmojiOption);
               
-              // Automatically retransform the text when emoji toggle changes
-              // but only if there's input text and a selected action
+              // Automatically transform the text using the add/remove emoji action
               if (inputText.trim()) {
-                // Use the most recently selected action, or default to simplify if none selected
-                const actionToUse = selectedTransformAction || selectedToneAction || 'simplify';
-                if (actionToUse) {
-                  setLoading(true);
-                  try {
-                    const transformedText = await transformText(inputText, actionToUse, selectedModel, newEmojiOption);
-                    setInputText(transformedText);
-                  } catch (error) {
-                    console.error('Emoji retransformation failed:', error);
-                  } finally {
-                    setLoading(false);
-                  }
+                setLoading(true);
+                try {
+                  // Using null for action since we want to let the server decide
+                  // based on the emojiOption
+                  const emojiAction = checked ? 'add_emoji' : 'remove_emoji';
+                  const transformedText = await transformText(
+                    inputText, 
+                    emojiAction, 
+                    selectedModel,
+                    newEmojiOption
+                  );
+                  setInputText(transformedText);
+                } catch (error) {
+                  console.error('Emoji transformation failed:', error);
+                } finally {
+                  setLoading(false);
                 }
               }
             }}

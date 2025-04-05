@@ -30,7 +30,7 @@ const TextTransformer: React.FC = () => {
   // Action button definitions with their respective icons and colors
   const actionButtons = [
     { action: 'simplify' as TransformAction, icon: 'content_cut', color: 'text-success', label: 'Shorten' },
-    { action: 'expand' as TransformAction, icon: 'edit_note', color: 'text-error', label: 'Elaborate' },
+    { action: 'expand' as TransformAction, icon: 'edit', color: 'text-error', label: 'Elaborate' },
   ];
   
   // Tone button definitions

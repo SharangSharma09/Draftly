@@ -12,6 +12,12 @@
     width: 20vw;
     height: 100vh;
     overflow-x: hidden;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   }
 
   /* Custom scrollbar */

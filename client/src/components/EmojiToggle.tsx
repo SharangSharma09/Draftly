@@ -19,7 +19,7 @@ export const EmojiToggle: React.FC<EmojiToggleProps> = ({
         htmlFor="emoji-toggle" 
         className={`text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'}`}
       >
-        Add Emojis
+        ADD EMOJIS
       </Label>
       <Switch 
         id="emoji-toggle" 

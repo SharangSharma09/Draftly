@@ -18,7 +18,9 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        action: "flex flex-col items-center justify-center p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary",
+        action: "flex flex-col items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-gray-50 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary",
+        actionCompact: "flex flex-row items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary",
+        actionWide: "flex flex-col items-center justify-center w-full rounded-lg border border-gray-200 bg-white hover:bg-gray-50 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary",
         copy: "copy-animation flex items-center gap-1 text-xs py-1 px-2 rounded-md border border-gray-300 hover:bg-gray-100"
       },
       size: {

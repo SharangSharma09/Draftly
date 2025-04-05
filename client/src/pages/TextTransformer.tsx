@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { ModelSelector } from '@/components/ModelSelector';
 import { ActionButton } from '@/components/ActionButton';
@@ -6,6 +6,7 @@ import { CopyButton } from '@/components/CopyButton';
 import { ClearButton } from '@/components/ClearButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { EmojiToggle } from '@/components/EmojiToggle';
+import { ButtonSettings, ButtonSettingsValues } from '@/components/ButtonSettings';
 import { transformText } from '@/lib/transformations';
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
@@ -26,6 +27,35 @@ const TextTransformer: React.FC = () => {
   const [selectionStart, setSelectionStart] = useState<number | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Button settings state
+  const [buttonSettings, setButtonSettings] = useState<ButtonSettingsValues>({
+    buttonSize: 'default',
+    iconSize: 'default',
+    gridCols: 2,
+    useCompact: false,
+    buttonVariant: 'action'
+  });
+  
+  // Store button settings in localStorage
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('wordflow-button-settings');
+    if (savedSettings) {
+      try {
+        setButtonSettings(JSON.parse(savedSettings));
+      } catch (e) {
+        console.error('Failed to parse saved button settings');
+      }
+    }
+  }, []);
+  
+  // Update localStorage when settings change
+  useEffect(() => {
+    localStorage.setItem('wordflow-button-settings', JSON.stringify(buttonSettings));
+  }, [buttonSettings]);
+  
+  // Toggle dev mode (button settings visibility)
+  const [showButtonSettings, setShowButtonSettings] = useState(false);
 
   // Action button definitions with their respective icons and colors
   const actionButtons = [
@@ -134,6 +164,11 @@ const TextTransformer: React.FC = () => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
+  };
+  
+  // Toggle button settings panel visibility (developer mode)
+  const toggleButtonSettings = () => {
+    setShowButtonSettings(prev => !prev);
   };
 
   return (
@@ -270,12 +305,27 @@ const TextTransformer: React.FC = () => {
           />
         </div>
         
+        {/* Button Settings Panel (hidden by default) */}
+        {showButtonSettings && (
+          <ButtonSettings 
+            settings={buttonSettings}
+            onSettingsChange={setButtonSettings}
+          />
+        )}
+        
         {/* Action buttons section */}
         <div className="mb-4">
-          <div className="mb-2">
+          <div className="mb-2 flex justify-between items-center">
             <h2 className="text-sm font-medium text-gray-700">Transform Text</h2>
+            {/* Double click to toggle button settings (developer mode) */}
+            <div 
+              className="h-6 w-6 cursor-pointer opacity-10 hover:opacity-30"
+              onDoubleClick={toggleButtonSettings}
+            >
+              <span className="material-icons text-gray-500" style={{ fontSize: '16px' }}>settings</span>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className={`grid grid-cols-${buttonSettings.gridCols} gap-2`}>
             {actionButtons.map((button) => (
               <ActionButton
                 key={button.action}
@@ -287,6 +337,9 @@ const TextTransformer: React.FC = () => {
                 disabled={loading || !inputText.trim()}
                 used={usedActions.includes(button.action)}
                 selected={selectedTransformAction === button.action}
+                size={buttonSettings.buttonSize}
+                iconSize={buttonSettings.iconSize}
+                variant={buttonSettings.buttonVariant}
               />
             ))}
           </div>
@@ -295,7 +348,7 @@ const TextTransformer: React.FC = () => {
         {/* Tone buttons section */}
         <div className="mb-4">
           <h2 className="text-sm font-medium text-gray-700 mb-2">Adjust Tone</h2>
-          <div className="grid grid-cols-2 gap-2">
+          <div className={`grid grid-cols-${buttonSettings.gridCols} gap-2`}>
             {toneButtons.map((button) => (
               <ActionButton
                 key={button.action}
@@ -307,6 +360,9 @@ const TextTransformer: React.FC = () => {
                 disabled={loading || !inputText.trim()}
                 used={usedActions.includes(button.action)}
                 selected={selectedToneAction === button.action}
+                size={buttonSettings.buttonSize}
+                iconSize={buttonSettings.iconSize}
+                variant={buttonSettings.buttonVariant}
               />
             ))}
           </div>

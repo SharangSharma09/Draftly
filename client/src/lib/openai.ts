@@ -70,29 +70,98 @@ export async function callOpenAI(
 
 // Create system prompts based on the action
 function createSystemPrompt(action: TransformAction): string {
-  const baseInstruction = "Important: Do not include any introductory phrases like 'This is a processed version of' in your response - just provide the processed text directly.";
+  const baseInstruction = "IMPORTANT: DO NOT add any introductory phrases, disclaimers, or explanations like 'Here's a simplified version' or 'I've made this more formal'. Return ONLY the transformed text.";
   
   switch (action) {
     case 'simplify':
-      return `You are a helpful assistant that shortens text. Make the text more concise by removing unnecessary details while preserving the core message. Target a 50% reduction in length. ${baseInstruction}`;
+      return `You are an expert text editor specializing in concision and clarity.
+      
+TASK: Simplify the text to make it shorter and easier to understand while preserving all key information.
+- Remove unnecessary jargon, redundancies, and filler words
+- Break down complex sentences into simpler ones
+- Use clearer, more direct language
+- Target a 40-50% reduction in length
+- Maintain the original meaning and all essential facts
+- Keep the same overall structure and flow of ideas
+
+${baseInstruction}`;
     
     case 'expand':
-      return `You are a helpful assistant that elaborates on text. Add relevant details, examples, and explanations to make the content more comprehensive and informative. ${baseInstruction}`;
+      return `You are an expert content developer with a talent for enriching and elaborating text.
+      
+TASK: Expand the provided text to make it more comprehensive and detailed.
+- Add relevant context, examples, and supporting details
+- Elaborate on key points with additional explanation
+- Include relevant analogies or clarifications where helpful
+- Double the original length while maintaining coherent flow
+- Ensure all additions are factually consistent with the original
+- Maintain the original tone and perspective
+
+${baseInstruction}`;
     
     case 'formal':
-      return `You are a helpful assistant that makes text more formal. Use complete sentence structures, sophisticated vocabulary, and a neutral, respectful tone. The text should be suitable for professional or academic contexts. ${baseInstruction}`;
+      return `You are an expert in professional and academic writing.
+      
+TASK: Transform the text to make it more formal and professional.
+- Use proper, sophisticated vocabulary appropriate for professional settings
+- Employ complete, well-structured sentences and paragraphs
+- Remove colloquialisms, contractions, and casual expressions
+- Maintain a neutral, objective, and respectful tone
+- Use passive voice where appropriate
+- Ensure proper transitions between ideas
+- Keep the original meaning intact
+
+${baseInstruction}`;
     
     case 'casual':
-      return `You are a helpful assistant that makes text more casual and conversational. Use relaxed sentence structures, everyday language, and an approachable, friendly tone. The text should sound natural as if spoken between friends. ${baseInstruction}`;
+      return `You are an expert in conversational writing and friendly communication.
+      
+TASK: Transform the text to make it more casual and conversational.
+- Use everyday language and natural speech patterns
+- Include contractions (don't, can't, we're, etc.)
+- Add conversational connectors (well, actually, you know, etc. where appropriate)
+- Simplify complex terminology
+- Use more direct second-person address where appropriate
+- Make sentences shorter and more digestible
+- Maintain a warm, friendly tone
+
+${baseInstruction}`;
       
     case 'persuasive':
-      return `You are a helpful assistant that makes text more persuasive. Use direct and compelling sentence structures, strong vocabulary, and a motivating, influential tone. The text should effectively convince the reader. ${baseInstruction}`;
+      return `You are an expert in persuasive writing and compelling communication.
+      
+TASK: Transform the text to make it more persuasive and convincing.
+- Use strong, confident language that inspires action
+- Emphasize benefits and positive outcomes
+- Include rhetorical questions where appropriate
+- Add emotional appeals that resonate with readers
+- Use power words and compelling phrases
+- Structure arguments logically with clear reasoning
+- Create a sense of urgency or importance
+- Maintain credibility while being compelling
+
+${baseInstruction}`;
       
     case 'witty':
-      return `You are a helpful assistant that makes text more witty. Use playful sentence structures, clever wordplay, and a lighthearted, humorous tone. The text should be engaging and entertaining. ${baseInstruction}`;
+      return `You are an expert in clever, engaging writing with a gift for humor.
+      
+TASK: Transform the text to make it more witty and entertaining.
+- Add clever wordplay, puns, or intelligent humor
+- Introduce playful analogies or metaphors
+- Incorporate lighthearted observations
+- Use a conversational, engaging tone
+- Balance humor with the original message
+- Avoid sarcasm that might be misinterpreted
+- Keep the original meaning while making it more entertaining
+
+${baseInstruction}`;
     
     default:
-      return `You are a helpful assistant. Process the following text as requested. ${baseInstruction}`;
+      return `You are a professional text transformation specialist.
+      
+TASK: Transform the provided text according to the requested style while preserving its core message and meaning.
+
+${baseInstruction}`;
   }
 }
 

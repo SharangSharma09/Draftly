@@ -11,6 +11,7 @@ interface ActionButtonProps {
   disabled?: boolean;
   used?: boolean;
   selected?: boolean;
+  useEmoji?: boolean;
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = ({ 
@@ -21,7 +22,8 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   onClick, 
   disabled,
   used = false,
-  selected = false
+  selected = false,
+  useEmoji = false
 }) => {
   return (
     <Button
@@ -33,7 +35,11 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       }`}
       data-action={action}
     >
-      <span className={`material-icons ${color}`}>{icon}</span>
+      {useEmoji ? (
+        <span className="text-2xl mb-1">{icon}</span>
+      ) : (
+        <span className={`material-icons ${color}`}>{icon}</span>
+      )}
       <span className="mt-1 text-xs font-medium">{label}</span>
     </Button>
   );

@@ -35,10 +35,10 @@ const TextTransformer: React.FC = () => {
   
   // Tone button definitions
   const toneButtons = [
-    { action: 'formal' as TransformAction, icon: 'work', color: 'text-primary', label: 'Formal' },
-    { action: 'casual' as TransformAction, icon: 'chat', color: 'text-accent', label: 'Casual' },
-    { action: 'persuasive' as TransformAction, icon: 'trending_up', color: 'text-warning', label: 'Persuasive' },
-    { action: 'witty' as TransformAction, icon: 'emoji_objects', color: 'text-secondary', label: 'Witty' },
+    { action: 'formal' as TransformAction, icon: '🧐', color: 'text-primary', label: 'Formal' },
+    { action: 'casual' as TransformAction, icon: '😎', color: 'text-accent', label: 'Casual' },
+    { action: 'persuasive' as TransformAction, icon: '😏', color: 'text-warning', label: 'Persuasive' },
+    { action: 'witty' as TransformAction, icon: '😜', color: 'text-secondary', label: 'Witty' },
   ];
 
   // Helper to check if an action is a transform or tone action
@@ -306,6 +306,7 @@ const TextTransformer: React.FC = () => {
                 disabled={loading || !inputText.trim()}
                 used={usedActions.includes(button.action)}
                 selected={selectedToneAction === button.action}
+                useEmoji={true}
               />
             ))}
           </div>

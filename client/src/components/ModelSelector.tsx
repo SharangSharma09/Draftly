@@ -41,16 +41,16 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
   const otherModels = getModelsByProvider('other');
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary appearance-none cursor-pointer flex items-center">
+          <div className="w-full bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 pr-8 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary appearance-none cursor-pointer flex items-center">
             {selectedOption.icon && <span className="material-icons text-sm mr-1">{selectedOption.icon}</span>}
             {selectedOption.label}
             <span className="material-icons text-sm ml-1">expand_more</span>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[180px]">          
+        <DropdownMenuContent className="w-full min-w-[250px]">          
           {/* Perplexity Models */}
           <DropdownMenuLabel className="text-xs font-bold">Perplexity</DropdownMenuLabel>
           {perplexityModels.map((model) => (

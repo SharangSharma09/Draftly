@@ -7,24 +7,47 @@
     @apply border-border;
   }
 
+  html {
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
     @apply font-sans antialiased bg-background text-foreground;
     width: 20vw;
-    height: 100vh;
-    overflow-x: hidden;
-    position: fixed;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    height: 100%;
+    overflow: hidden;
     margin: 0;
+  }
+
+  /* Fixed sidebar container */
+  #root {
+    width: 20vw;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 100;
+    background-color: white;
+  }
+
+  /* Prevent dropdown from causing shift */
+  [data-radix-popper-content-wrapper] {
+    position: absolute !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    width: auto !important;
   }
   
-  /* Override any positioning shifts from dropdown portals */
-  body, #root, #root > div {
-    transform: none !important;
-    left: auto !important;
+  /* Ensure the dropdown content stays within the panel */
+  [data-radix-dropdown-menu-content] {
+    max-width: calc(20vw - 20px) !important;
+    width: calc(20vw - 20px) !important;
+    margin-left: 10px !important;
   }
 
   /* Custom scrollbar */

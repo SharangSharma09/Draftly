@@ -41,7 +41,7 @@ const TextTransformer: React.FC = () => {
     { action: 'persuasive' as TransformAction, icon: '😏', color: 'text-warning', label: 'Persuasive' },
     { action: 'witty' as TransformAction, icon: '😜', color: 'text-secondary', label: 'Witty' },
     { action: 'empathetic' as TransformAction, icon: '🫶', color: 'text-rose-500', label: 'Empathetic' },
-    { action: 'direct' as TransformAction, icon: '🎯', color: 'text-emerald-500', label: 'To the point' },
+    { action: 'direct' as TransformAction, icon: '🎯', color: 'text-emerald-500', label: 'Direct' },
   ];
 
   // Helper to check if an action is a transform or tone action

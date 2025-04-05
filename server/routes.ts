@@ -5,137 +5,162 @@ import OpenAI from "openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Add a route to handle text transformations
-  app.post('/api/transform', async (req: Request, res: Response) => {
+  app.post("/api/transform", async (req: Request, res: Response) => {
     try {
-      console.log('Received transformation request:', {
-        text: req.body.text?.substring(0, 50) + '...',
+      console.log("Received transformation request:", {
+        text: req.body.text?.substring(0, 50) + "...",
         action: req.body.action,
         model: req.body.model,
-        emojiOption: req.body.emojiOption
+        emojiOption: req.body.emojiOption,
       });
-      
+
       const { text, action, model, emojiOption } = req.body;
-      
+
       // Validate input
       if (!text || !action || !model) {
-        return res.status(400).json({ 
-          error: 'Missing required parameters', 
-          details: { 
-            text: !text ? 'missing' : 'ok',
-            action: !action ? 'missing' : 'ok',
-            model: !model ? 'missing' : 'ok'
-          }
+        return res.status(400).json({
+          error: "Missing required parameters",
+          details: {
+            text: !text ? "missing" : "ok",
+            action: !action ? "missing" : "ok",
+            model: !model ? "missing" : "ok",
+          },
         });
       }
-      
+
       // Handle emoji functionality through language models instead of client-side processing
       let actionToUse = action;
-      
-      // Convert emoji toggle to the appropriate action
-      if (emojiOption === 'on') {
-        actionToUse = 'add_emoji';
-      } else if (emojiOption === 'off') {
-        // We'll let the server-side determine if emojis need to be removed
-        actionToUse = 'remove_emoji';
+
+      // Only override action for direct emoji actions, not for transformation actions
+      if (action === "add_emoji" && emojiOption === "on") {
+        actionToUse = "add_emoji";
+      } else if (action === "remove_emoji" && emojiOption === "off") {
+        actionToUse = "remove_emoji";
       }
       
+      // Don't override the requested action for regular transformations
+
       // For transformation actions, first apply the transformation and then apply emoji action if needed
-      if (['simplify', 'expand', 'formal', 'casual', 'persuasive', 'witty'].includes(action) && emojiOption === 'on') {
-        let transformedText = '';
-        
+      if (
+        [
+          "simplify",
+          "expand",
+          "formal",
+          "casual",
+          "persuasive",
+          "witty",
+        ].includes(action) &&
+        emojiOption === "on"
+      ) {
+        let transformedText = "";
+
         // First do the primary transformation
-        if (['llama-3', 'llama-3-70b'].includes(model)) {
+        if (["llama-3", "llama-3-70b"].includes(model)) {
           transformedText = await callPerplexityApi(text, action, model);
-        } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
+        } else if (["gpt-3.5-turbo", "gpt-4o"].includes(model)) {
           transformedText = await callOpenAIApi(text, action, model);
-        } else if (['claude-2', 'palm'].includes(model)) {
-          console.log(`Mock model ${model} requested, using Perplexity API instead`);
-          transformedText = await callPerplexityApi(text, action, 'llama-3');
+        } else if (["claude-2", "palm"].includes(model)) {
+          console.log(
+            `Mock model ${model} requested, using Perplexity API instead`,
+          );
+          transformedText = await callPerplexityApi(text, action, "llama-3");
         } else {
-          return res.status(400).json({ error: 'Invalid model specified' });
+          return res.status(400).json({ error: "Invalid model specified" });
         }
-        
+
         // Then apply emoji processing to the result
-        let result = '';
-        if (['llama-3', 'llama-3-70b'].includes(model)) {
-          result = await callPerplexityApi(transformedText, 'add_emoji', model);
-        } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
-          result = await callOpenAIApi(transformedText, 'add_emoji', model);
+        let result = "";
+        if (["llama-3", "llama-3-70b"].includes(model)) {
+          result = await callPerplexityApi(transformedText, "add_emoji", model);
+        } else if (["gpt-3.5-turbo", "gpt-4o"].includes(model)) {
+          result = await callOpenAIApi(transformedText, "add_emoji", model);
         } else {
-          result = await callPerplexityApi(transformedText, 'add_emoji', 'llama-3');
+          result = await callPerplexityApi(
+            transformedText,
+            "add_emoji",
+            "llama-3",
+          );
         }
-        
+
         return res.json({ transformed: result });
       } else {
         // For direct emoji operations or normal transformations without emoji processing
-        let result = '';
-        
-        if (['llama-3', 'llama-3-70b'].includes(model)) {
+        let result = "";
+
+        if (["llama-3", "llama-3-70b"].includes(model)) {
           result = await callPerplexityApi(text, actionToUse, model);
-        } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
+        } else if (["gpt-3.5-turbo", "gpt-4o"].includes(model)) {
           result = await callOpenAIApi(text, actionToUse, model);
-        } else if (['claude-2', 'palm'].includes(model)) {
-          console.log(`Mock model ${model} requested, using Perplexity API instead`);
-          result = await callPerplexityApi(text, actionToUse, 'llama-3');
+        } else if (["claude-2", "palm"].includes(model)) {
+          console.log(
+            `Mock model ${model} requested, using Perplexity API instead`,
+          );
+          result = await callPerplexityApi(text, actionToUse, "llama-3");
         } else {
-          return res.status(400).json({ error: 'Invalid model specified' });
+          return res.status(400).json({ error: "Invalid model specified" });
         }
-        
+
         return res.json({ transformed: result });
       }
     } catch (error: any) {
-      console.error('Error in /api/transform:', error);
-      
+      console.error("Error in /api/transform:", error);
+
       // Determine the HTTP status code based on the error
       let statusCode = 500;
-      if (error.message?.includes('API key')) {
+      if (error.message?.includes("API key")) {
         statusCode = 401; // Unauthorized
       }
-      
+
       // Create a more user-friendly error message
-      let clientMessage = error.message || 'Unknown error';
-      
+      let clientMessage = error.message || "Unknown error";
+
       // Format API key errors to be more helpful
-      if (error.message?.includes('OpenAI API key')) {
-        clientMessage = 'OpenAI API key is invalid or missing. Please check your OpenAI API key.';
-      } else if (error.message?.includes('Perplexity API key')) {
-        clientMessage = 'Perplexity API key is invalid or missing. Please check your Perplexity API key.';
+      if (error.message?.includes("OpenAI API key")) {
+        clientMessage =
+          "OpenAI API key is invalid or missing. Please check your OpenAI API key.";
+      } else if (error.message?.includes("Perplexity API key")) {
+        clientMessage =
+          "Perplexity API key is invalid or missing. Please check your Perplexity API key.";
       }
-      
-      return res.status(statusCode).json({ 
-        error: 'Failed to transform text',
-        message: clientMessage
+
+      return res.status(statusCode).json({
+        error: "Failed to transform text",
+        message: clientMessage,
       });
     }
   });
-  
+
   // Health check endpoint to ensure the server is running
-  app.get('/api/health', (_req: Request, res: Response) => {
+  app.get("/api/health", (_req: Request, res: Response) => {
     // Check API keys without exposing them
-    const perplexityKeyValid = process.env.PERPLEXITY_API_KEY?.startsWith('pplx-') || false;
+    const perplexityKeyValid =
+      process.env.PERPLEXITY_API_KEY?.startsWith("pplx-") || false;
     const openaiKeyExists = !!process.env.OPENAI_API_KEY;
-    const openaiKeyValid = openaiKeyExists && (process.env.OPENAI_API_KEY?.length ?? 0) > 20;
-    
+    const openaiKeyValid =
+      openaiKeyExists && (process.env.OPENAI_API_KEY?.length ?? 0) > 20;
+
     const apiKeys = {
       perplexity: {
         exists: !!process.env.PERPLEXITY_API_KEY,
         validFormat: perplexityKeyValid,
-        prefix: process.env.PERPLEXITY_API_KEY?.substring(0, 5) || 'N/A'
+        prefix: process.env.PERPLEXITY_API_KEY?.substring(0, 5) || "N/A",
       },
       openai: {
         exists: openaiKeyExists,
         validFormat: openaiKeyValid,
-        prefix: openaiKeyExists ? process.env.OPENAI_API_KEY?.substring(0, 3) + '...' : 'N/A'
-      }
+        prefix: openaiKeyExists
+          ? process.env.OPENAI_API_KEY?.substring(0, 3) + "..."
+          : "N/A",
+      },
     };
-    
+
     // Overall status is good if at least one API key is valid
-    const overallStatus = (perplexityKeyValid || openaiKeyValid) ? 'ok' : 'error';
-    
-    res.json({ 
-      status: overallStatus, 
+    const overallStatus = perplexityKeyValid || openaiKeyValid ? "ok" : "error";
+
+    res.json({
+      status: overallStatus,
       timestamp: new Date().toISOString(),
-      apiKeys
+      apiKeys,
     });
   });
 
@@ -144,78 +169,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-
-
 // Perplexity API function
-async function callPerplexityApi(text: string, action: string, model: string): Promise<string> {
+async function callPerplexityApi(
+  text: string,
+  action: string,
+  model: string,
+): Promise<string> {
   const systemPrompt = createSystemPrompt(action);
   // Use larger model if llama-3-70b was requested
-  const apiModel = model === 'llama-3-70b' 
-    ? 'llama-3.1-sonar-large-128k-online' 
-    : 'llama-3.1-sonar-small-128k-online';
-  
-  console.log('Calling Perplexity API with:', {
+  const apiModel =
+    model === "llama-3-70b"
+      ? "llama-3.1-sonar-large-128k-online"
+      : "llama-3.1-sonar-small-128k-online";
+
+  console.log("Calling Perplexity API with:", {
     model: apiModel,
     action,
-    systemPrompt
+    systemPrompt,
   });
-  
+
   // Debug environment variables (without revealing actual values)
-  console.log('Checking environment variables:');
-  console.log('PERPLEXITY_API_KEY available:', !!process.env.PERPLEXITY_API_KEY);
-  console.log('PERPLEXITY_API_KEY starts with:', process.env.PERPLEXITY_API_KEY?.substring(0, 5));
-  
+  console.log("Checking environment variables:");
+  console.log(
+    "PERPLEXITY_API_KEY available:",
+    !!process.env.PERPLEXITY_API_KEY,
+  );
+  console.log(
+    "PERPLEXITY_API_KEY starts with:",
+    process.env.PERPLEXITY_API_KEY?.substring(0, 5),
+  );
+
   try {
     // Verify we have the correct API key format for Perplexity
     const apiKey = process.env.PERPLEXITY_API_KEY;
-    if (!apiKey || !apiKey.startsWith('pplx-')) {
-      throw new Error('Invalid Perplexity API key format. Perplexity keys should start with pplx-');
+    if (!apiKey || !apiKey.startsWith("pplx-")) {
+      throw new Error(
+        "Invalid Perplexity API key format. Perplexity keys should start with pplx-",
+      );
     }
-    
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
+
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: apiModel,
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: text }
+          { role: "system", content: systemPrompt },
+          { role: "user", content: text },
         ],
         temperature: 0.2,
         max_tokens: 1500,
         top_p: 0.9,
-        stream: false
-      })
+        stream: false,
+      }),
     });
-    
+
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Perplexity API Error:', errorData);
-      throw new Error(`Perplexity API error: ${errorData.error?.message || response.statusText}`);
+      console.error("Perplexity API Error:", errorData);
+      throw new Error(
+        `Perplexity API error: ${errorData.error?.message || response.statusText}`,
+      );
     }
-    
+
     const data = await response.json();
-    console.log('Perplexity API Response:', {
+    console.log("Perplexity API Response:", {
       model: data.model,
-      contentLength: data.choices[0].message.content.length
+      contentLength: data.choices[0].message.content.length,
     });
-    
+
     return data.choices[0].message.content;
   } catch (error: any) {
-    console.error('Perplexity API call failed:', error);
-    throw new Error(error.message || 'Perplexity API error');
+    console.error("Perplexity API call failed:", error);
+    throw new Error(error.message || "Perplexity API error");
   }
 }
 
 // Create system prompts based on the action
 function createSystemPrompt(action: string): string {
-  const baseInstruction = "IMPORTANT: DO NOT add any introductory phrases, disclaimers, or explanations like 'Here's a simplified version' or 'I've made this more formal'. Return ONLY the transformed text.";
-  
+  const baseInstruction =
+    "IMPORTANT: DO NOT add any introductory phrases, disclaimers, or explanations like 'Here's a simplified version' or 'I've made this more formal'. Return ONLY the transformed text.";
+
   switch (action) {
-    case 'simplify':
+    case "simplify":
       return `You are an expert text editor specializing in concision and clarity.
       
 TASK: Simplify the text to make it shorter and easier to understand while preserving all key information.
@@ -227,18 +266,22 @@ TASK: Simplify the text to make it shorter and easier to understand while preser
 - Keep the same overall structure and flow of ideas
 
 ${baseInstruction}`;
-    
-    case 'expand':
-      return `You are an expert content developer with a talent for enriching and elaborating text.
-      
-TASK: Expand the provided text to make it more comprehensive and detailed.
-- Double the original length while maintaining coherent flow
-- Maintain the original tone and perspective
-- Do not include analogies or examples
+
+    case "expand":
+      return `You are an expert writing assistant.
+Your task is to expand the given input text to approximately double its length while preserving the original meaning and ensuring a smooth, coherent flow.
+
+Follow these guidelines:
+
+Do not alter the core message, facts, or intent of the input.
+Use clarifying details, examples, analogies, or elaboration to enrich the content.
+Maintain the same tone and style as the original text.
+Avoid repetition, filler words, or unnecessary complexity.
+Ensure that the output reads naturally and fluently, as if it were originally written at that length.
 
 ${baseInstruction}`;
-    
-    case 'formal':
+
+    case "formal":
       return `You are an expert in professional and academic writing.
       
 TASK: Transform the text to make it more formal and professional.
@@ -252,8 +295,8 @@ TASK: Transform the text to make it more formal and professional.
 - Keep the character count same as the input text
 
 ${baseInstruction}`;
-    
-    case 'casual':
+
+    case "casual":
       return `You are an expert in conversational writing and friendly communication.
       
 TASK: Transform the text to make it more casual and conversational.
@@ -267,8 +310,8 @@ TASK: Transform the text to make it more casual and conversational.
 - Keep the character count same as the input text
 
 ${baseInstruction}`;
-      
-    case 'persuasive':
+
+    case "persuasive":
       return `You are an expert in persuasive writing and compelling communication.
       
 TASK: Transform the text to make it more persuasive and convincing.
@@ -283,8 +326,8 @@ TASK: Transform the text to make it more persuasive and convincing.
 - Keep the character count same as the input text
 
 ${baseInstruction}`;
-      
-    case 'witty':
+
+    case "witty":
       return `You are an expert in clever, engaging writing with a gift for humor.
       
 TASK: Transform the text to make it more witty and entertaining.
@@ -298,8 +341,8 @@ TASK: Transform the text to make it more witty and entertaining.
 - Keep the character count same as the input text
 
 ${baseInstruction}`;
-    
-    case 'add_emoji':
+
+    case "add_emoji":
       return `You are an expert text editor which adds appropriate emojis to enhance the text.
 
 TASK: Add suitable, contextual emojis to the provided text.
@@ -311,8 +354,8 @@ TASK: Add suitable, contextual emojis to the provided text.
 - Do not change any of the original text content
 
 ${baseInstruction}`;
-    
-    case 'remove_emoji':
+
+    case "remove_emoji":
       return `You are an expert text editor specialized in text cleanup.
 
 TASK: Remove all emojis from the provided text.
@@ -322,7 +365,7 @@ TASK: Remove all emojis from the provided text.
 - Ensure proper spacing after emoji removal (no double spaces)
 
 ${baseInstruction}`;
-    
+
     default:
       return `You are a professional text transformation specialist.
       
@@ -336,10 +379,10 @@ ${baseInstruction}`;
 function addEmojis(text: string, action: string): string {
   // Get emoji that matches the action based on transformation type
   const actionEmoji = getActionEmoji(action);
-  
+
   // Add an emoji at the beginning of the text
   let result = `${actionEmoji} ${text}`;
-  
+
   // For bullet points or lists in the text, add emojis to each point
   // Match bullet points (lines starting with •, *, -, or numbers)
   const bulletRegex = /^([•\*\-]|\d+\.)\s+(.+)$/gm;
@@ -348,7 +391,7 @@ function addEmojis(text: string, action: string): string {
     const randomEmoji = getBulletEmoji();
     return `${bullet} ${randomEmoji} ${content}`;
   });
-  
+
   // Add contextual emojis at the end of sentences
   // Simple regex to match the end of sentences
   const sentenceEndRegex = /([.!?])\s+/g;
@@ -360,33 +403,33 @@ function addEmojis(text: string, action: string): string {
     }
     return match;
   });
-  
+
   return result;
 }
 
 // Get an emoji based on the transformation action
 function getActionEmoji(action: string): string {
   switch (action) {
-    case 'simplify':
-      return '✂️';
-    case 'expand':
-      return '📚';
-    case 'formal':
-      return '👔';
-    case 'casual':
-      return '😊';
-    case 'persuasive':
-      return '🎯';
-    case 'witty':
-      return '😄';
+    case "simplify":
+      return "✂️";
+    case "expand":
+      return "📚";
+    case "formal":
+      return "👔";
+    case "casual":
+      return "😊";
+    case "persuasive":
+      return "🎯";
+    case "witty":
+      return "😄";
     default:
-      return '✨';
+      return "✨";
   }
 }
 
 // Get a random emoji for bullet points from a list
 function getBulletEmoji(): string {
-  const bulletEmojis = ['✅', '👉', '📌', '💡', '🔑', '📊', '🎯', '📈'];
+  const bulletEmojis = ["✅", "👉", "📌", "💡", "🔑", "📊", "🎯", "📈"];
   const randomIndex = Math.floor(Math.random() * bulletEmojis.length);
   return bulletEmojis[randomIndex];
 }
@@ -395,61 +438,95 @@ function getBulletEmoji(): string {
 function getContextEmoji(): string {
   // Variety of common emojis that would fit well at the end of sentences
   const contextEmojis = [
-    '😊', '👍', '✨', '🙌', '💯', '🔥', '💫', '🌟', 
-    '💭', '💡', '🤔', '📝', '👀', '🚀', '🎯', '💪',
-    '🌈', '🍀', '🌺', '🎵', '📚', '🎮', '💻', '📱',
-    '🏆', '🏅', '🎓', '🧠', '💼', '👏', '🌞', '🌠'
+    "😊",
+    "👍",
+    "✨",
+    "🙌",
+    "💯",
+    "🔥",
+    "💫",
+    "🌟",
+    "💭",
+    "💡",
+    "🤔",
+    "📝",
+    "👀",
+    "🚀",
+    "🎯",
+    "💪",
+    "🌈",
+    "🍀",
+    "🌺",
+    "🎵",
+    "📚",
+    "🎮",
+    "💻",
+    "📱",
+    "🏆",
+    "🏅",
+    "🎓",
+    "🧠",
+    "💼",
+    "👏",
+    "🌞",
+    "🌠",
   ];
   const randomIndex = Math.floor(Math.random() * contextEmojis.length);
   return contextEmojis[randomIndex];
 }
 
 // OpenAI API function
-async function callOpenAIApi(text: string, action: string, model: string): Promise<string> {
+async function callOpenAIApi(
+  text: string,
+  action: string,
+  model: string,
+): Promise<string> {
   const systemPrompt = createSystemPrompt(action);
   // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. Do not change this unless explicitly requested by the user
-  const apiModel = model === 'gpt-4o' ? 'gpt-4o' : 'gpt-3.5-turbo';
-  
-  console.log('Calling OpenAI API with:', {
+  const apiModel = model === "gpt-4o" ? "gpt-4o" : "gpt-3.5-turbo";
+
+  console.log("Calling OpenAI API with:", {
     model: apiModel,
     action,
-    systemPrompt
+    systemPrompt,
   });
-  
+
   // Debug environment variables (without revealing actual values)
-  console.log('Checking environment variables:');
-  console.log('OPENAI_API_KEY available:', !!process.env.OPENAI_API_KEY);
-  const apiKeyLength = process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.length : 0;
-  console.log('OPENAI_API_KEY length:', apiKeyLength);
-  
+  console.log("Checking environment variables:");
+  console.log("OPENAI_API_KEY available:", !!process.env.OPENAI_API_KEY);
+  const apiKeyLength = process.env.OPENAI_API_KEY
+    ? process.env.OPENAI_API_KEY.length
+    : 0;
+  console.log("OPENAI_API_KEY length:", apiKeyLength);
+
   try {
     // Verify we have an OpenAI API key
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey || apiKey.length < 20) {
-      throw new Error('Invalid OpenAI API key. Please check your API key.');
+      throw new Error("Invalid OpenAI API key. Please check your API key.");
     }
-    
+
     // Initialize the OpenAI client
     const openai = new OpenAI({ apiKey });
-    
+
     const completion = await openai.chat.completions.create({
       model: apiModel,
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: text }
+        { role: "system", content: systemPrompt },
+        { role: "user", content: text },
       ],
       temperature: 0.7,
-      max_tokens: 1500
+      max_tokens: 1500,
     });
-    
-    console.log('OpenAI API Response:', {
+
+    console.log("OpenAI API Response:", {
       model: completion.model,
-      contentLength: completion.choices[0].message.content?.length || 0
+      contentLength: completion.choices[0].message.content?.length || 0,
     });
-    
-    return completion.choices[0].message.content || '';
+
+    return completion.choices[0].message.content || "";
   } catch (error: any) {
-    console.error('OpenAI API call failed:', error);
-    throw new Error(error.message || 'OpenAI API error');
+    console.error("OpenAI API call failed:", error);
+    throw new Error(error.message || "OpenAI API error");
   }
 }

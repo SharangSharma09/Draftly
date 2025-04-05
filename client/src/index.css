@@ -18,6 +18,13 @@
     bottom: 0;
     margin: 0;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  /* Override any positioning shifts from dropdown portals */
+  body, #root, #root > div {
+    transform: none !important;
+    left: auto !important;
   }
 
   /* Custom scrollbar */

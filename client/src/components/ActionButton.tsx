@@ -12,6 +12,7 @@ interface ActionButtonProps {
   used?: boolean;
   selected?: boolean;
   useEmoji?: boolean;
+  rotation?: string;
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = ({ 
@@ -23,8 +24,12 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   disabled,
   used = false,
   selected = false,
-  useEmoji = false
+  useEmoji = false,
+  rotation
 }) => {
+  // Style for rotation if specified
+  const rotationStyle = rotation ? { transform: `rotate(${rotation})` } : {};
+  
   return (
     <Button
       variant="action"
@@ -36,9 +41,9 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       data-action={action}
     >
       {useEmoji ? (
-        <span className="text-2xl mb-1">{icon}</span>
+        <span className="text-2xl mb-1" style={rotationStyle}>{icon}</span>
       ) : (
-        <span className={`material-icons ${color}`}>{icon}</span>
+        <span className={`material-icons ${color}`} style={rotationStyle}>{icon}</span>
       )}
       <span className="mt-1 text-xs font-medium">{label}</span>
     </Button>

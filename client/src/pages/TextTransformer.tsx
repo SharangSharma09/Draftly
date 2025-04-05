@@ -27,11 +27,11 @@ const TextTransformer: React.FC = () => {
   const [selectionEnd, setSelectionEnd] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Action button definitions with their respective icons and colors
+  // Action button definitions with their respective emoji icons and colors
   const actionButtons = [
-    { action: 'simplify' as TransformAction, icon: 'content_cut', color: 'text-success', label: 'Shorten' },
-    { action: 'expand' as TransformAction, icon: 'edit', color: 'text-error', label: 'Elaborate' },
-    { action: 'rephrase' as TransformAction, icon: 'autorenew', color: 'text-info', label: 'Rephrase' },
+    { action: 'simplify' as TransformAction, icon: '✂️', color: 'text-success', label: 'Shorten', useEmoji: true, rotation: '-90deg' },
+    { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '180deg' },
+    { action: 'rephrase' as TransformAction, icon: '🔄', color: 'text-info', label: 'Rephrase', useEmoji: true },
   ];
   
   // Tone button definitions
@@ -291,6 +291,8 @@ const TextTransformer: React.FC = () => {
                 disabled={loading || !inputText.trim()}
                 used={usedActions.includes(button.action)}
                 selected={selectedTransformAction === button.action}
+                useEmoji={button.useEmoji}
+                rotation={button.rotation}
               />
             ))}
           </div>

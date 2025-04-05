@@ -88,6 +88,7 @@ const TextTransformer: React.FC = () => {
     setSelectedToneAction(null);
     // Reset emoji toggle to OFF
     setEmojiOption('off');
+    // Note: We don't reset selectedModel here as requested
   };
 
   return (
@@ -97,7 +98,8 @@ const TextTransformer: React.FC = () => {
         <div className="flex justify-center mb-2">
           <h1 className="text-xl font-semibold text-gray-800">WordFlow</h1>
         </div>
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center">
+          <h2 className="text-sm font-medium text-gray-700 mb-2">Select Model</h2>
           <ModelSelector
             selectedModel={selectedModel}
             onSelectModel={setSelectedModel}

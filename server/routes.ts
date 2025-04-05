@@ -201,12 +201,9 @@ ${baseInstruction}`;
       return `You are an expert content developer with a talent for enriching and elaborating text.
       
 TASK: Expand the provided text to make it more comprehensive and detailed.
-- Add relevant context, examples, and supporting details
-- Elaborate on key points with additional explanation
-- Include relevant analogies or clarifications where helpful
 - Double the original length while maintaining coherent flow
-- Ensure all additions are factually consistent with the original
 - Maintain the original tone and perspective
+- Do not include analogies or examples
 
 ${baseInstruction}`;
     

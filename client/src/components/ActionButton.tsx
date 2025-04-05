@@ -13,6 +13,7 @@ interface ActionButtonProps {
   selected?: boolean;
   useEmoji?: boolean;
   rotation?: string;
+  flip?: 'horizontal' | 'vertical' | 'both';
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = ({ 
@@ -25,10 +26,34 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   used = false,
   selected = false,
   useEmoji = false,
-  rotation
+  rotation,
+  flip
 }) => {
-  // Style for rotation if specified
-  const rotationStyle = rotation ? { transform: `rotate(${rotation})` } : {};
+  // Create style object based on rotation and flip properties
+  const createTransformStyle = () => {
+    let transform = '';
+    
+    // Add rotation if specified
+    if (rotation) {
+      transform += `rotate(${rotation})`;
+    }
+    
+    // Add flip if specified
+    if (flip) {
+      const scaleX = flip === 'horizontal' || flip === 'both' ? -1 : 1;
+      const scaleY = flip === 'vertical' || flip === 'both' ? -1 : 1;
+      
+      if (transform) {
+        transform += ` scale(${scaleX}, ${scaleY})`;
+      } else {
+        transform = `scale(${scaleX}, ${scaleY})`;
+      }
+    }
+    
+    return transform ? { transform } : {};
+  };
+  
+  const transformStyle = createTransformStyle();
   
   return (
     <Button
@@ -41,9 +66,9 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       data-action={action}
     >
       {useEmoji ? (
-        <span className="text-2xl mb-1" style={rotationStyle}>{icon}</span>
+        <span className="text-2xl mb-1" style={transformStyle}>{icon}</span>
       ) : (
-        <span className={`material-icons ${color}`} style={rotationStyle}>{icon}</span>
+        <span className={`material-icons ${color}`} style={transformStyle}>{icon}</span>
       )}
       <span className="mt-1 text-xs font-medium">{label}</span>
     </Button>

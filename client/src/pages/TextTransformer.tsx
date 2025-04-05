@@ -30,7 +30,7 @@ const TextTransformer: React.FC = () => {
   // Action button definitions with their respective emoji icons and colors
   const actionButtons = [
     { action: 'simplify' as TransformAction, icon: '✂️', color: 'text-success', label: 'Shorten', useEmoji: true, rotation: '-90deg' },
-    { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '0deg' },
+    { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '0deg', flip: 'horizontal' },
     { action: 'rephrase' as TransformAction, icon: '🔄', color: 'text-info', label: 'Rephrase', useEmoji: true },
   ];
   
@@ -39,9 +39,9 @@ const TextTransformer: React.FC = () => {
     { action: 'formal' as TransformAction, icon: '🧐', color: 'text-primary', label: 'Formal' },
     { action: 'casual' as TransformAction, icon: '😎', color: 'text-accent', label: 'Casual' },
     { action: 'persuasive' as TransformAction, icon: '😏', color: 'text-warning', label: 'Persuasive' },
-    { action: 'witty' as TransformAction, icon: '😜', color: 'text-secondary', label: 'Witty' },
+    { action: 'witty' as TransformAction, icon: '🦊', color: 'text-secondary', label: 'Witty' },
     { action: 'empathetic' as TransformAction, icon: '🫶', color: 'text-rose-500', label: 'Empathetic' },
-    { action: 'direct' as TransformAction, icon: '🎯', color: 'text-emerald-500', label: 'Direct' },
+    { action: 'direct' as TransformAction, icon: '🧠', color: 'text-emerald-500', label: 'Knowledgable' },
   ];
 
   // Helper to check if an action is a transform or tone action
@@ -293,6 +293,7 @@ const TextTransformer: React.FC = () => {
                 selected={selectedTransformAction === button.action}
                 useEmoji={button.useEmoji}
                 rotation={button.rotation}
+                flip={button.flip}
               />
             ))}
           </div>

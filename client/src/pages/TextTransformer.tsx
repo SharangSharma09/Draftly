@@ -183,7 +183,7 @@ const TextTransformer: React.FC = () => {
                 setSelectionEnd(target.selectionEnd);
               }}
               placeholder="Paste your text here... Select text to transform only that portion."
-              className="w-full h-40"
+              className="w-full h-52"
             />
             
             {loading && <LoadingIndicator />}

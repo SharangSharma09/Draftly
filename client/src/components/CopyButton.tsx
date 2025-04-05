@@ -29,7 +29,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
       className={`flex-1 ${copied ? "active" : ""} bg-[#6668FF] text-white hover:bg-[#5557DF] rounded-md`}
       disabled={!text.trim()}
     >
-      <span>{copied ? "Copied!" : "Copy Text"}</span>
+      <span>{copied ? "COPIED!" : "COPY TEXT"}</span>
     </Button>
   );
 };

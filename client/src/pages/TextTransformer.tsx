@@ -137,12 +137,27 @@ const TextTransformer: React.FC = () => {
         <div className="mb-2">
           <EmojiToggle
             enabled={emojiOption === 'on'}
-            onChange={(checked: boolean) => {
+            onChange={async (checked: boolean) => {
               const newEmojiOption = checked ? 'on' : 'off';
               setEmojiOption(newEmojiOption);
               
-              // We just toggle the emoji option without triggering any transformation
-              // to avoid automatically selecting buttons
+              // Automatically retransform the text when emoji toggle changes
+              // but only if there's input text and a selected action
+              if (inputText.trim()) {
+                // Use the most recently selected action, or default to simplify if none selected
+                const actionToUse = selectedTransformAction || selectedToneAction || 'simplify';
+                if (actionToUse) {
+                  setLoading(true);
+                  try {
+                    const transformedText = await transformText(inputText, actionToUse, selectedModel, newEmojiOption);
+                    setInputText(transformedText);
+                  } catch (error) {
+                    console.error('Emoji retransformation failed:', error);
+                  } finally {
+                    setLoading(false);
+                  }
+                }
+              }
             }}
             disabled={loading}
           />

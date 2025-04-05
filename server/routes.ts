@@ -1,6 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import OpenAI from "openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Add a route to handle text transformations
@@ -33,6 +34,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (['llama-3', 'llama-3-70b'].includes(model)) {
         // Call Perplexity API
         result = await callPerplexityApi(text, action, model);
+      } else if (['gpt-3.5-turbo', 'gpt-4o'].includes(model)) {
+        // Call OpenAI API
+        result = await callOpenAIApi(text, action, model);
       } else if (['claude-2', 'palm'].includes(model)) {
         // For mock models, use Perplexity API but log the requested model
         console.log(`Mock model ${model} requested, using Perplexity API instead`);
@@ -59,19 +63,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Health check endpoint to ensure the server is running
   app.get('/api/health', (_req: Request, res: Response) => {
-    // Check API key without exposing them
+    // Check API keys without exposing them
     const perplexityKeyValid = process.env.PERPLEXITY_API_KEY?.startsWith('pplx-') || false;
+    const openaiKeyExists = !!process.env.OPENAI_API_KEY;
+    const openaiKeyValid = openaiKeyExists && (process.env.OPENAI_API_KEY?.length ?? 0) > 20;
     
     const apiKeys = {
       perplexity: {
         exists: !!process.env.PERPLEXITY_API_KEY,
         validFormat: perplexityKeyValid,
         prefix: process.env.PERPLEXITY_API_KEY?.substring(0, 5) || 'N/A'
+      },
+      openai: {
+        exists: openaiKeyExists,
+        validFormat: openaiKeyValid,
+        prefix: openaiKeyExists ? process.env.OPENAI_API_KEY?.substring(0, 3) + '...' : 'N/A'
       }
     };
     
-    // Overall status is good if Perplexity API key is valid
-    const overallStatus = perplexityKeyValid ? 'ok' : 'error';
+    // Overall status is good if at least one API key is valid
+    const overallStatus = (perplexityKeyValid || openaiKeyValid) ? 'ok' : 'error';
     
     res.json({ 
       status: overallStatus, 
@@ -249,4 +260,54 @@ function getContextEmoji(): string {
   ];
   const randomIndex = Math.floor(Math.random() * contextEmojis.length);
   return contextEmojis[randomIndex];
+}
+
+// OpenAI API function
+async function callOpenAIApi(text: string, action: string, model: string): Promise<string> {
+  const systemPrompt = createSystemPrompt(action);
+  // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. Do not change this unless explicitly requested by the user
+  const apiModel = model === 'gpt-4o' ? 'gpt-4o' : 'gpt-3.5-turbo';
+  
+  console.log('Calling OpenAI API with:', {
+    model: apiModel,
+    action,
+    systemPrompt
+  });
+  
+  // Debug environment variables (without revealing actual values)
+  console.log('Checking environment variables:');
+  console.log('OPENAI_API_KEY available:', !!process.env.OPENAI_API_KEY);
+  const apiKeyLength = process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.length : 0;
+  console.log('OPENAI_API_KEY length:', apiKeyLength);
+  
+  try {
+    // Verify we have the OpenAI API key
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('OpenAI API key is missing. Please set the OPENAI_API_KEY environment variable.');
+    }
+    
+    // Initialize the OpenAI client
+    const openai = new OpenAI({ apiKey });
+    
+    const completion = await openai.chat.completions.create({
+      model: apiModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: text }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500
+    });
+    
+    console.log('OpenAI API Response:', {
+      model: completion.model,
+      contentLength: completion.choices[0].message.content?.length || 0
+    });
+    
+    return completion.choices[0].message.content || '';
+  } catch (error: any) {
+    console.error('OpenAI API call failed:', error);
+    throw new Error(error.message || 'OpenAI API error');
+  }
 }

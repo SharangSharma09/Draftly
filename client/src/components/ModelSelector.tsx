@@ -19,6 +19,10 @@ const models: ModelOption[] = [
   { value: 'llama-3', label: 'Llama 3 (Small)', provider: 'perplexity', icon: 'smart_toy' },
   { value: 'llama-3-70b', label: 'Llama 3 (Large)', provider: 'perplexity', icon: 'smart_toy' },
   
+  // OpenAI models
+  { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', provider: 'openai', icon: 'auto_awesome' },
+  { value: 'gpt-4o', label: 'GPT-4o', provider: 'openai', icon: 'auto_awesome' },
+  
   // Other models (mocked in this implementation)
   { value: 'claude-2', label: 'Claude 2', provider: 'other', icon: 'psychology' },
   { value: 'palm', label: 'PaLM', provider: 'other', icon: 'psychology' },
@@ -33,6 +37,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
   };
 
   const perplexityModels = getModelsByProvider('perplexity');
+  const openaiModels = getModelsByProvider('openai');
   const otherModels = getModelsByProvider('other');
 
   return (
@@ -49,6 +54,20 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
           {/* Perplexity Models */}
           <DropdownMenuLabel className="text-xs font-bold">Perplexity</DropdownMenuLabel>
           {perplexityModels.map((model) => (
+            <DropdownMenuItem 
+              key={model.value} 
+              onClick={() => onSelectModel(model.value)}
+              className={selectedModel === model.value ? 'bg-gray-100' : ''}
+            >
+              {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
+              {model.label}
+            </DropdownMenuItem>
+          ))}
+          
+          {/* OpenAI Models */}
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="text-xs font-bold">OpenAI</DropdownMenuLabel>
+          {openaiModels.map((model) => (
             <DropdownMenuItem 
               key={model.value} 
               onClick={() => onSelectModel(model.value)}

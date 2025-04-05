@@ -15,7 +15,7 @@ export const ClearButton: React.FC<ClearButtonProps> = ({ onClick, disabled }) =
       disabled={disabled}
       className="text-gray-500 hover:text-gray-700"
     >
-      <span className="material-icons text-sm">clear</span>
+      {/* <span className="material-icons text-sm">clear</span */}
       <span className="ml-1">Clear</span>
     </Button>
   );

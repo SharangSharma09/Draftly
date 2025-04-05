@@ -147,7 +147,7 @@ const TextTransformer: React.FC = () => {
       {/* Header section */}
       <header className="p-4 border-b border-gray-200 bg-white shadow-sm">
         <div className="flex justify-center mb-2">
-          <h1 className="text-xl font-semibold text-gray-800">WordFlow</h1>
+          <h1 className="text-xl font-semibold text-gray-800">Draftly</h1>
         </div>
         <div className="flex flex-col w-full">
           <ModelSelector

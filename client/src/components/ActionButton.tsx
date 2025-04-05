@@ -30,7 +30,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       variant="action"
       onClick={onClick}
       disabled={disabled}
-      className={`px-0 py-4 h-auto relative ${
+      className={`px-0 py-3 h-auto relative ${
         selected ? 'ring-2 ring-blue-500 ring-offset-1' : ''
       }`}
       data-action={action}

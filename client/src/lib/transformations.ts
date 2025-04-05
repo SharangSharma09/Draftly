@@ -106,6 +106,8 @@ function getActionEmoji(action: TransformAction): string {
       return '✂️';
     case 'expand':
       return '📚';
+    case 'rephrase':
+      return '🔄';
     case 'formal':
       return '👔';
     case 'casual':

@@ -10,7 +10,7 @@ import { transformText } from '@/lib/transformations';
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
 export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
-export type TransformAction = 'simplify' | 'expand' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'add_emoji' | 'remove_emoji';
+export type TransformAction = 'simplify' | 'expand' | 'rephrase' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'add_emoji' | 'remove_emoji';
 export type EmojiOption = 'on' | 'off';
 
 const TextTransformer: React.FC = () => {
@@ -31,6 +31,7 @@ const TextTransformer: React.FC = () => {
   const actionButtons = [
     { action: 'simplify' as TransformAction, icon: 'content_cut', color: 'text-success', label: 'Shorten' },
     { action: 'expand' as TransformAction, icon: 'edit', color: 'text-error', label: 'Elaborate' },
+    { action: 'rephrase' as TransformAction, icon: 'autorenew', color: 'text-info', label: 'Rephrase' },
   ];
   
   // Tone button definitions
@@ -43,7 +44,7 @@ const TextTransformer: React.FC = () => {
 
   // Helper to check if an action is a transform or tone action
   const isTransformAction = (action: TransformAction): boolean => {
-    return ['simplify', 'expand'].includes(action);
+    return ['simplify', 'expand', 'rephrase'].includes(action);
   };
   
   const isToneAction = (action: TransformAction): boolean => {
@@ -60,9 +61,11 @@ const TextTransformer: React.FC = () => {
       setSelectedTransformAction(action);
       // Deselect other transform actions
       if (action === 'simplify') {
-        setUsedActions(prev => [...prev.filter(a => a !== 'expand'), 'simplify']);
+        setUsedActions(prev => [...prev.filter(a => a !== 'expand' && a !== 'rephrase'), 'simplify']);
       } else if (action === 'expand') {
-        setUsedActions(prev => [...prev.filter(a => a !== 'simplify'), 'expand']);
+        setUsedActions(prev => [...prev.filter(a => a !== 'simplify' && a !== 'rephrase'), 'expand']);
+      } else if (action === 'rephrase') {
+        setUsedActions(prev => [...prev.filter(a => a !== 'simplify' && a !== 'expand'), 'rephrase']);
       }
     } else if (isToneAction(action)) {
       setSelectedToneAction(action);
@@ -274,7 +277,7 @@ const TextTransformer: React.FC = () => {
           <div className="mb-2">
             <h2 className="text-sm font-medium text-gray-700">Transform Text</h2>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {actionButtons.map((button) => (
               <ActionButton
                 key={button.action}

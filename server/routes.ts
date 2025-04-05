@@ -366,6 +366,19 @@ TASK: Remove all emojis from the provided text.
 
 ${baseInstruction}`;
 
+    case "rephrase":
+      return `You are an expert text editor specialized in rewording and rephrasing.
+
+TASK: Rephrase the provided text while keeping the same meaning.
+- Use different vocabulary and sentence structures
+- Maintain the same tone and level of formality
+- Preserve the original meaning completely
+- Be creative with word choice but keep it natural
+- Ensure the output stays approximately the same length as the input
+- Don't add or remove any key information
+
+${baseInstruction}`;
+
     default:
       return `You are a professional text transformation specialist.
       
@@ -414,6 +427,8 @@ function getActionEmoji(action: string): string {
       return "✂️";
     case "expand":
       return "📚";
+    case "rephrase":
+      return "🔄";
     case "formal":
       return "👔";
     case "casual":

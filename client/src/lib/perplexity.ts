@@ -100,6 +100,19 @@ TASK: Expand the provided text to make it more comprehensive and detailed.
 - Maintain the original tone and perspective
 
 ${baseInstruction}`;
+      
+    case 'rephrase':
+      return `You are an expert text editor specialized in rewording and rephrasing.
+      
+TASK: Rephrase the provided text while keeping the same meaning.
+- Use different vocabulary and sentence structures
+- Maintain the same tone and level of formality
+- Preserve the original meaning completely
+- Be creative with word choice but keep it natural
+- Ensure the output stays approximately the same length as the input
+- Don't add or remove any key information
+
+${baseInstruction}`;
     
     case 'formal':
       return `You are an expert in professional and academic writing.
@@ -157,6 +170,32 @@ TASK: Transform the text to make it more witty and entertaining.
 - Keep the original meaning while making it more entertaining
 
 ${baseInstruction}`;
+
+    case 'empathetic':
+      return `You are an expert in empathetic communication and emotionally intelligent writing.
+      
+TASK: Transform the text to be more empathetic and emotionally sensitive.
+- Use compassionate, understanding, and inclusive language
+- Acknowledge the emotions, challenges, or needs of the audience
+- Soften direct statements to sound more considerate and supportive
+- Maintain a warm, respectful tone without being overly sentimental
+- Ensure the final output feels encouraging, respectful, and human
+- Keep the original meaning and content intact
+
+${baseInstruction}`;
+
+    case 'direct':
+      return `You are an expert in clear, concise, and direct communication.
+      
+TASK: Transform the text to be more direct and to-the-point.
+- Eliminate unnecessary filler words, qualifiers, or vague phrases
+- Use clear, concise, and assertive language
+- Favor shorter, active sentences and remove indirect expressions
+- Avoid softening or hedging the message unless necessary
+- Ensure the tone feels confident, focused, and unambiguous
+- Keep all essential facts and meaning intact
+
+${baseInstruction}`;
     
     default:
       return `You are a professional text transformation specialist.
@@ -180,6 +219,9 @@ function mockTransformResponse(text: string, action: TransformAction): string {
     
     case 'expand':
       return `${preview.substring(0, 40)}... [with additional context and elaboration on the main topics]`;
+      
+    case 'rephrase':
+      return `${preview.substring(0, 40)}... [reworded with different vocabulary and structures]`;
     
     case 'formal':
       return `${preview.substring(0, 40)}... [expressed in formal language]`;
@@ -192,6 +234,12 @@ function mockTransformResponse(text: string, action: TransformAction): string {
       
     case 'witty':
       return `${preview.substring(0, 40)}... [expressed with wit and humor]`;
+      
+    case 'empathetic':
+      return `${preview.substring(0, 40)}... [expressed with empathy and emotional sensitivity]`;
+      
+    case 'direct':
+      return `${preview.substring(0, 40)}... [expressed in a direct, to-the-point manner]`;
     
     default:
       return text;

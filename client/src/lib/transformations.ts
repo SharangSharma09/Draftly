@@ -113,9 +113,13 @@ function getActionEmoji(action: TransformAction): string {
     case 'casual':
       return '😊';
     case 'persuasive':
-      return '🎯';
+      return '😏';
     case 'witty':
       return '😄';
+    case 'empathetic':
+      return '🫶';
+    case 'direct':
+      return '🎯';
     case 'add_emoji':
       return '😎';
     case 'remove_emoji':

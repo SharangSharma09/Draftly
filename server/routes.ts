@@ -45,10 +45,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         [
           "simplify",
           "expand",
+          "rephrase",
           "formal",
           "casual",
           "persuasive",
           "witty",
+          "empathetic",
+          "direct",
         ].includes(action) &&
         emojiOption === "on"
       ) {
@@ -379,6 +382,34 @@ TASK: Rephrase the provided text while keeping the same meaning.
 
 ${baseInstruction}`;
 
+    case "empathetic":
+      return `You are an expert writing assistant.
+
+TASK: Rewrite the given input text in a more empathetic and emotionally sensitive tone.
+- Do not change the core message, facts, or intent of the input
+- Use compassionate, understanding, and inclusive language to show care for the reader's perspective
+- Acknowledge the emotions, challenges, or needs of the audience when appropriate
+- Soften direct statements to sound more considerate and supportive
+- Maintain a warm, respectful tone without being overly sentimental
+- Ensure the final output feels encouraging, respectful, and human
+- Keep the character count same as the input text
+
+${baseInstruction}`;
+
+    case "direct":
+      return `You are an expert writing assistant.
+
+TASK: Rewrite the given input text in a direct and to-the-point style.
+- Do not remove or distort any essential facts or intent
+- Eliminate unnecessary filler words, qualifiers, or vague phrases
+- Use clear, concise, and assertive language to get the point across quickly
+- Favor shorter, active sentences and remove indirect expressions
+- Avoid softening or hedging the message unless absolutely necessary
+- Ensure the tone feels confident, focused, and unambiguous, while staying respectful
+- Keep the character count same as the input text
+
+${baseInstruction}`;
+
     default:
       return `You are a professional text transformation specialist.
       
@@ -434,9 +465,13 @@ function getActionEmoji(action: string): string {
     case "casual":
       return "😊";
     case "persuasive":
-      return "🎯";
+      return "😏";
     case "witty":
       return "😄";
+    case "empathetic":
+      return "🫶";
+    case "direct":
+      return "🎯";
     default:
       return "✨";
   }

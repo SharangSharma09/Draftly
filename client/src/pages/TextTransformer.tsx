@@ -10,7 +10,7 @@ import { transformText } from '@/lib/transformations';
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
 export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
-export type TransformAction = 'simplify' | 'expand' | 'rephrase' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'add_emoji' | 'remove_emoji';
+export type TransformAction = 'simplify' | 'expand' | 'rephrase' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'empathetic' | 'direct' | 'add_emoji' | 'remove_emoji';
 export type EmojiOption = 'on' | 'off';
 
 const TextTransformer: React.FC = () => {
@@ -40,6 +40,8 @@ const TextTransformer: React.FC = () => {
     { action: 'casual' as TransformAction, icon: '😎', color: 'text-accent', label: 'Casual' },
     { action: 'persuasive' as TransformAction, icon: '😏', color: 'text-warning', label: 'Persuasive' },
     { action: 'witty' as TransformAction, icon: '😜', color: 'text-secondary', label: 'Witty' },
+    { action: 'empathetic' as TransformAction, icon: '🫶', color: 'text-rose-500', label: 'Empathetic' },
+    { action: 'direct' as TransformAction, icon: '🎯', color: 'text-emerald-500', label: 'To the point' },
   ];
 
   // Helper to check if an action is a transform or tone action
@@ -48,7 +50,7 @@ const TextTransformer: React.FC = () => {
   };
   
   const isToneAction = (action: TransformAction): boolean => {
-    return ['formal', 'casual', 'persuasive', 'witty'].includes(action);
+    return ['formal', 'casual', 'persuasive', 'witty', 'empathetic', 'direct'].includes(action);
   };
 
   const handleTransform = async (action: TransformAction) => {
@@ -70,7 +72,7 @@ const TextTransformer: React.FC = () => {
     } else if (isToneAction(action)) {
       setSelectedToneAction(action);
       // Deselect other tone actions
-      const otherToneActions = ['formal', 'casual', 'persuasive', 'witty'].filter(a => a !== action);
+      const otherToneActions = ['formal', 'casual', 'persuasive', 'witty', 'empathetic', 'direct'].filter(a => a !== action);
       setUsedActions(prev => [
         ...prev.filter(a => !otherToneActions.includes(a as TransformAction)), 
         action
@@ -297,7 +299,7 @@ const TextTransformer: React.FC = () => {
         {/* Tone buttons section */}
         <div className="mb-4">
           <h2 className="text-sm font-medium text-gray-700 mb-2">Adjust Tone</h2>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {toneButtons.map((button) => (
               <ActionButton
                 key={button.action}

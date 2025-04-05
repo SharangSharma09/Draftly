@@ -218,6 +218,7 @@ TASK: Transform the text to make it more formal and professional.
 - Use passive voice where appropriate
 - Ensure proper transitions between ideas
 - Keep the original meaning intact
+- Keep the character count same as the input text
 
 ${baseInstruction}`;
     
@@ -232,6 +233,7 @@ TASK: Transform the text to make it more casual and conversational.
 - Use more direct second-person address where appropriate
 - Make sentences shorter and more digestible
 - Maintain a warm, friendly tone
+- Keep the character count same as the input text
 
 ${baseInstruction}`;
       
@@ -247,6 +249,7 @@ TASK: Transform the text to make it more persuasive and convincing.
 - Structure arguments logically with clear reasoning
 - Create a sense of urgency or importance
 - Maintain credibility while being compelling
+- Keep the character count same as the input text
 
 ${baseInstruction}`;
       
@@ -261,6 +264,7 @@ TASK: Transform the text to make it more witty and entertaining.
 - Balance humor with the original message
 - Avoid sarcasm that might be misinterpreted
 - Keep the original meaning while making it more entertaining
+- Keep the character count same as the input text
 
 ${baseInstruction}`;
     

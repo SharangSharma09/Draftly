@@ -141,12 +141,8 @@ const TextTransformer: React.FC = () => {
               const newEmojiOption = checked ? 'on' : 'off';
               setEmojiOption(newEmojiOption);
               
-              // Auto-transform the text if we have text
-              if (inputText.trim()) {
-                // Use the active transformation action or default to simplify
-                const lastAction = selectedTransformAction || selectedToneAction || 'simplify' as TransformAction;
-                handleTransform(lastAction);
-              }
+              // We just toggle the emoji option without triggering any transformation
+              // to avoid automatically selecting buttons
             }}
             disabled={loading}
           />

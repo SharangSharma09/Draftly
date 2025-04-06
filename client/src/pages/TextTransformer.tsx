@@ -198,6 +198,15 @@ const TextTransformer: React.FC = () => {
 
       {/* Main content area */}
       <main className="flex-1 p-4 pt-5 flex flex-col gap-4 overflow-auto">
+        {/* Control buttons section - now positioned above the text input */}
+        <div className="w-full flex gap-2 mb-2">
+          <div className="flex gap-2">
+            <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
+            <UndoButton onClick={handleUndo} disabled={previousVersions.length === 0} />
+          </div>
+          <CopyButton text={inputText} />
+        </div>
+        
         {/* Text input section */}
         <div className="flex flex-col gap-2">
           <div className="relative">
@@ -235,13 +244,6 @@ const TextTransformer: React.FC = () => {
                 Selection active: {selectionEnd - selectionStart} chars
               </div>
             )}
-          </div>
-          <div className="w-full mt-1 flex gap-2">
-            <CopyButton text={inputText} />
-            <div className="flex gap-2">
-              <UndoButton onClick={handleUndo} disabled={previousVersions.length === 0} />
-              <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
-            </div>
           </div>
         </div>
 

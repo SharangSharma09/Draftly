@@ -44,7 +44,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
     <div className="relative w-full">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded-xl text-sm focus:outline-none appearance-none cursor-pointer flex items-center justify-between"
+        className="w-full bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded-md text-sm focus:outline-none appearance-none cursor-pointer flex items-center justify-between"
       >
         <div className="flex items-center">
           {selectedOption.icon && <span className="material-icons text-sm mr-1">{selectedOption.icon}</span>}
@@ -54,7 +54,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
       </button>
       
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-[#ffffff] border border-gray-200 rounded-xl shadow-md z-50">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[#ffffff] border border-gray-200 rounded-md shadow-md z-50">
           <div className="p-2 bg-[#ffffff]">
             <div className="text-xs font-bold mb-1">Perplexity</div>
             {perplexityModels.map((model) => (

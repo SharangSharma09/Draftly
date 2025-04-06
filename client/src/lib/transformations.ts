@@ -11,6 +11,10 @@ function getModelProvider(model: LLMModel): ModelProvider {
   }
 }
 
+// Import direct API calling functions
+import { callOpenAI } from './openai';
+import { callPerplexity } from './perplexity';
+
 // Function to handle different text transformations
 export async function transformText(
   text: string, 
@@ -31,51 +35,36 @@ export async function transformText(
   }
 
   try {
-    // Call the server API instead of directly calling the AI providers
-    console.log('Calling server API endpoint');
-    const response = await fetch('/api/transform', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text,
-        action,
-        model,
-        emojiOption
-      })
-    });
+    let transformedText = '';
+
+    // Determine which API to call based on the model
+    const provider = getModelProvider(model);
+    console.log(`Using provider: ${provider} for model: ${model}`);
     
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Server API Error:', errorData);
-      
-      // Check if it's an API key error
-      if (errorData.message && errorData.message.includes('API key')) {
-        if (errorData.message.includes('OpenAI')) {
-          throw new Error(`OpenAI API key error. Please set a valid OpenAI API key.`);
-        } else if (errorData.message.includes('Perplexity')) {
-          throw new Error(`Perplexity API key error. Please set a valid Perplexity API key.`);
-        }
-      }
-      
-      throw new Error(`Server API error: ${errorData.message || errorData.error || response.statusText}`);
+    // Call the appropriate API based on the model provider
+    if (provider === 'openai') {
+      console.log('Calling OpenAI API directly...');
+      transformedText = await callOpenAI(text, action, model);
+    } else if (provider === 'perplexity') {
+      console.log('Calling Perplexity API directly...');
+      transformedText = await callPerplexity(text, action, model);
+    } else {
+      console.log('Unknown provider, using fallback');
+      throw new Error('Unknown model provider');
+    }
+
+    console.log('API response received, length:', transformedText.length);
+    console.log('First 100 characters:', transformedText.substring(0, 100) + (transformedText.length > 100 ? '...' : ''));
+    
+    // Add emojis if specified
+    if (emojiOption === 'on') {
+      transformedText = addMinimalEmojis(transformedText, action);
     }
     
-    const data = await response.json();
-    
-    if (!data.transformed) {
-      console.error('Missing transformed text in response:', data);
-      throw new Error('Server returned an invalid response');
-    }
-    
-    console.log('Server API response received, length:', data.transformed.length);
-    console.log('First 100 characters:', data.transformed.substring(0, 100) + (data.transformed.length > 100 ? '...' : ''));
-    
-    return data.transformed;
+    return transformedText;
   } catch (error: any) {
     console.error('Error in transformText:', error);
-    return `Error: ${error.message || 'Unknown error'}. Please try again.`;
+    return `Error: ${error.message || 'Failed to fetch. Please try again.'}`;
   }
 }
 

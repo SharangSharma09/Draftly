@@ -14,6 +14,7 @@ interface ActionButtonProps {
   useEmoji?: boolean;
   rotation?: string;
   flip?: 'horizontal' | 'vertical' | 'both';
+  className?: string;
 }
 
 export const ActionButton: React.FC<ActionButtonProps> = ({ 
@@ -27,7 +28,8 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
   selected = false,
   useEmoji = false,
   rotation,
-  flip
+  flip,
+  className = ''
 }) => {
   // Create style object based on rotation and flip properties
   const createTransformStyle = () => {
@@ -62,7 +64,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       disabled={disabled}
       className={`px-0 py-3 h-auto relative rounded-xl ${
         selected ? 'ring-2 ring-[#6668FF] ring-offset-0' : ''
-      }`}
+      } ${className}`}
       data-action={action}
     >
       {useEmoji ? (

@@ -50,6 +50,9 @@ const TextTransformer: React.FC = () => {
     { action: 'expand' as TransformAction, icon: '✏️', color: 'text-error', label: 'Elaborate', useEmoji: true, rotation: '0deg', flip: 'horizontal' as const },
     { action: 'rephrase' as TransformAction, icon: '🔄', color: 'text-info', label: 'Rephrase', useEmoji: true },
   ];
+
+  // Emoji button for add_emoji action
+  const emojiButton = { action: 'add_emoji' as TransformAction, icon: '✨', color: 'text-amber-500', label: 'Add Emoji', useEmoji: true };
   
   // Tone button definitions
   const toneButtons = [
@@ -236,90 +239,14 @@ const TextTransformer: React.FC = () => {
           </div>
         </div>
 
-        {/* Emoji toggle */}
-        <div className="mb-2 pt-5">
-          <EmojiToggle
-            enabled={emojiOption === 'on'}
-            onChange={async (checked: boolean) => {
-              const newEmojiOption = checked ? 'on' : 'off';
-              setEmojiOption(newEmojiOption);
-              
-              // Automatically transform the text using the add/remove emoji action
-              if (inputText.trim()) {
-                setLoading(true);
-                try {
-                  const emojiAction = checked ? 'add_emoji' : 'remove_emoji';
-                  
-                  // Save the current text to previousVersions before making changes
-                  setPreviousVersions(prev => {
-                    const newPrev = [...prev];
-                    // Add current text to previous versions and limit to 3 items
-                    if (newPrev.length >= 3) {
-                      newPrev.shift(); // Remove oldest version if we have 3 already
-                    }
-                    newPrev.push(inputText);
-                    return newPrev;
-                  });
-                  
-                  // Check if there's a text selection
-                  const hasSelection = selectionStart !== null && 
-                                    selectionEnd !== null && 
-                                    selectionStart !== selectionEnd;
-                                    
-                  if (hasSelection) {
-                    // Only transform the selected portion
-                    const selectedText = inputText.substring(selectionStart!, selectionEnd!);
-                    const before = inputText.substring(0, selectionStart!);
-                    const after = inputText.substring(selectionEnd!);
-                    
-                    // Transform only the selected text
-                    const transformedSelection = await transformText(
-                      selectedText, 
-                      emojiAction, 
-                      selectedModel,
-                      newEmojiOption
-                    );
-                    
-                    // Reconstruct the full text with the transformed selection
-                    const newText = before + transformedSelection + after;
-                    setInputText(newText);
-                    
-                    // Attempt to restore cursor position after transformation
-                    setTimeout(() => {
-                      if (textareaRef.current) {
-                        // Set selection to the end of the transformed section
-                        const newSelectionEnd = before.length + transformedSelection.length;
-                        textareaRef.current.setSelectionRange(before.length, newSelectionEnd);
-                        textareaRef.current.focus();
-                      }
-                    }, 50);
-                  } else {
-                    // Transform the entire text if no selection
-                    const transformedText = await transformText(
-                      inputText, 
-                      emojiAction, 
-                      selectedModel,
-                      newEmojiOption
-                    );
-                    setInputText(transformedText);
-                  }
-                } catch (error) {
-                  console.error('Emoji transformation failed:', error);
-                } finally {
-                  setLoading(false);
-                }
-              }
-            }}
-            disabled={loading}
-          />
-        </div>
+
         
         {/* Action buttons section */}
         <div className="mb-4">
           <div className="mb-2">
             <h2 className="text-sm font-medium text-gray-700">TRANSFORM TEXT</h2>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 mb-2">
             {actionButtons.map((button) => (
               <ActionButton
                 key={button.action}
@@ -336,6 +263,20 @@ const TextTransformer: React.FC = () => {
                 flip={button.flip}
               />
             ))}
+          </div>
+          <div className="w-full">
+            <ActionButton
+              action={emojiButton.action}
+              icon={emojiButton.icon}
+              color={emojiButton.color}
+              label={emojiButton.label}
+              onClick={() => handleTransform(emojiButton.action)}
+              disabled={loading || !inputText.trim()}
+              used={usedActions.includes(emojiButton.action)}
+              selected={false}
+              useEmoji={emojiButton.useEmoji}
+              className="w-full"
+            />
           </div>
         </div>
 

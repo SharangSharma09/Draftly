@@ -247,7 +247,7 @@ const TextTransformer: React.FC = () => {
         {/* Action buttons section */}
         <div className="mb-4 pt-5">
           <div className="mb-2">
-            <h2 className="text-sm font-medium text-gray-700">TRANSFORM TEXT</h2>
+            <h2 className="text-xs font-medium text-[#7B7B7B]">TRANSFORM TEXT</h2>
           </div>
           <div className="grid grid-cols-3 gap-2 mb-2">
             {actionButtons.map((button) => (
@@ -287,7 +287,7 @@ const TextTransformer: React.FC = () => {
 
         {/* Tone buttons section */}
         <div className="mb-4">
-          <h2 className="text-sm font-medium text-gray-700 mb-2">ADJUST TONE</h2>
+          <h2 className="text-xs font-medium text-[#7B7B7B] mb-2">ADJUST TONE</h2>
           <div className="grid grid-cols-3 gap-2">
             {toneButtons.map((button) => (
               <ActionButton

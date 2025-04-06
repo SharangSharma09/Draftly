@@ -11,11 +11,14 @@ npm run build
 # Copy the built files to the extension directory
 cp -r dist/* extension-build/
 
-# Copy the popup manifest file (replacing the side panel manifest)
-cp popup-manifest.json extension-build/manifest.json
+# Copy the manifest file
+cp client/manifest.json extension-build/
 
-# Copy the popup background script
-cp popup-background.js extension-build/background.js
+# Create background script
+echo "
+// Background script for Draftly Chrome Extension
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+" > extension-build/background.js
 
 # Create content script
 echo "
@@ -32,14 +35,9 @@ cp client/public/icons/icon.svg extension-build/public/icons/icon-16.png
 cp client/public/icons/icon.svg extension-build/public/icons/icon-48.png
 cp client/public/icons/icon.svg extension-build/public/icons/icon-128.png
 
-# Find the CSS file and append our popup-specific styles
-CSS_FILE=$(find extension-build -name "*.css" | grep -v node_modules | head -1)
-if [ -n "$CSS_FILE" ]; then
-  cat popup-styles.css >> "$CSS_FILE"
-  echo "Added popup styles to $CSS_FILE"
-else
-  echo "Warning: Could not find CSS file to add popup styles"
-fi
+# Update the manifest to point to the correct files
+sed -i 's/"service_worker": "src\/background.ts"/"service_worker": "background.js"/g' extension-build/manifest.json
+sed -i 's/"js": \["src\/contentScript.ts"\]/"js": \["contentScript.js"\]/g' extension-build/manifest.json
 
 echo "Extension built successfully! The extension is in the 'extension-build' directory."
 echo "To install the extension in Chrome:"

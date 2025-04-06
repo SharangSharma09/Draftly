@@ -181,7 +181,7 @@ const TextTransformer: React.FC = () => {
   return (
     <div className="bg-white text-gray-800 flex flex-col h-screen">
       {/* Header section */}
-      <header className="p-4 bg-white shadow-sm">
+      <header className="p-4 bg-white">
         <div className="flex justify-center mb-2">
           <h1 className="text-xl font-semibold text-gray-800">Draftly</h1>
         </div>

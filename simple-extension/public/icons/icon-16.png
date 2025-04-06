@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="4" y="4" width="120" height="120" rx="24" fill="#6668FF" />
+  
+  <!-- Text editor paper -->
+  <rect x="24" y="24" width="80" height="80" rx="8" fill="white" />
+  
+  <!-- Text lines -->
+  <rect x="32" y="36" width="64" height="4" rx="2" fill="#E0E0E0" />
+  <rect x="32" y="48" width="50" height="4" rx="2" fill="#E0E0E0" />
+  <rect x="32" y="60" width="64" height="4" rx="2" fill="#E0E0E0" />
+  <rect x="32" y="72" width="40" height="4" rx="2" fill="#E0E0E0" />
+  <rect x="32" y="84" width="54" height="4" rx="2" fill="#E0E0E0" />
+  
+  <!-- Magic wand -->
+  <g transform="translate(75, 30) rotate(45)">
+    <rect x="0" y="0" width="24" height="4" rx="2" fill="#6668FF" />
+    <circle cx="28" cy="2" r="6" fill="#FFD700" />
+    <circle cx="28" cy="2" r="3" fill="#FFECAA" />
+    
+    <!-- Sparkles -->
+    <circle cx="35" cy="-3" r="1.5" fill="#FFD700" />
+    <circle cx="33" cy="-8" r="1" fill="#FFD700" />
+    <circle cx="40" cy="0" r="1" fill="#FFD700" />
+  </g>
+</svg>

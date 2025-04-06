@@ -179,10 +179,10 @@ const TextTransformer: React.FC = () => {
   };
 
   return (
-    <div className="bg-white text-gray-800 flex flex-col h-screen">
+    <div className="bg-white text-gray-800 flex flex-col h-full max-w-[400px] mx-auto">
       {/* Header section */}
-      <header className="p-4 bg-white">
-        <div className="flex justify-center mb-2">
+      <header className="p-3 bg-white">
+        <div className="flex justify-center mb-1">
           <h1 className="text-xl font-semibold text-gray-800">Draftly</h1>
         </div>
         <div className="flex flex-col w-full">
@@ -194,7 +194,7 @@ const TextTransformer: React.FC = () => {
       </header>
 
       {/* Main content area */}
-      <main className="flex-1 p-4 pt-5 flex flex-col gap-4 overflow-auto">
+      <main className="flex-1 p-3 pt-4 flex flex-col gap-3 overflow-auto">
         {/* Text input section */}
         <div className="flex flex-col gap-2">
           <div className="relative">
@@ -219,7 +219,7 @@ const TextTransformer: React.FC = () => {
                 setSelectionEnd(target.selectionEnd);
               }}
               placeholder="Enter your text here"
-              className="w-full h-60 bg-[#F6F6F6] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl text-xl"
+              className="w-full h-40 bg-[#F6F6F6] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl text-base"
             />
             
             {loading && <LoadingIndicator />}
@@ -245,8 +245,8 @@ const TextTransformer: React.FC = () => {
 
         
         {/* Action buttons section */}
-        <div className="mb-4 pt-5">
-          <div className="mb-2">
+        <div className="mb-3 pt-3">
+          <div className="mb-1">
             <h2 className="text-xs font-medium text-[#7B7B7B]">TRANSFORM TEXT</h2>
           </div>
           <div className="grid grid-cols-3 gap-2 mb-2">
@@ -286,8 +286,8 @@ const TextTransformer: React.FC = () => {
         </div>
 
         {/* Tone buttons section */}
-        <div className="mb-4">
-          <h2 className="text-xs font-medium text-[#7B7B7B] mb-2">ADJUST TONE</h2>
+        <div className="mb-3">
+          <h2 className="text-xs font-medium text-[#7B7B7B] mb-1">ADJUST TONE</h2>
           <div className="grid grid-cols-3 gap-2">
             {toneButtons.map((button) => (
               <ActionButton

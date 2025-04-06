@@ -194,6 +194,32 @@ TASK: Transform the text to be more direct and to-the-point.
 - Keep all essential facts and meaning intact
 
 ${baseInstruction}`;
+
+    case 'add_emoji':
+      return `You are an expert text editor which adds appropriate emojis to enhance the text.
+
+TASK: Add suitable, contextual emojis to the provided text.
+- Insert relevant emojis next to key nouns, verbs, and concepts
+- Use emojis that match the tone and topic of the text
+- Place emojis strategically to enhance readability and engagement
+- Don't overuse emojis - aim for balance (approximately 1 emoji per sentence or idea)
+- Do not add emojis if the text already contains them
+- Do not change any of the original text content
+
+${baseInstruction}`;
+
+    case 'fix_grammar':
+      return `You are an expert writing assistant.
+Your task is to correct the grammar in the given input text without changing its meaning, tone, or structure.
+
+Follow these guidelines:
+- Fix all grammatical errors, including verb tense, subject-verb agreement, punctuation, article usage, prepositions, and sentence structure.
+- Do not rewrite or rephrase unnecessarily—only make grammatical improvements.
+- Preserve the original voice, tone, and style of the input text.
+- Ensure the corrected version reads naturally and fluently, as if written by a native speaker.
+- Avoid changing the length or intent of the original text.
+
+${baseInstruction}`;
     
     default:
       return `You are a professional text transformation specialist.
@@ -238,6 +264,12 @@ function mockTransformResponse(text: string, action: TransformAction): string {
       
     case 'direct':
       return `${preview.substring(0, 40)}... [expressed in a direct, to-the-point manner]`;
+      
+    case 'add_emoji':
+      return `${preview.substring(0, 40)}... [with appropriate emojis added 😊]`;
+      
+    case 'fix_grammar':
+      return `${preview.substring(0, 40)}... [with grammar errors corrected]`;
     
     default:
       return text;

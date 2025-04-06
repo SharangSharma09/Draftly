@@ -11,7 +11,7 @@ import { transformText } from '@/lib/transformations';
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
 export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
-export type TransformAction = 'simplify' | 'expand' | 'rephrase' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'empathetic' | 'direct' | 'add_emoji' | 'remove_emoji';
+export type TransformAction = 'simplify' | 'expand' | 'rephrase' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'empathetic' | 'direct' | 'add_emoji' | 'remove_emoji' | 'fix_grammar';
 export type EmojiOption = 'on' | 'off';
 
 const TextTransformer: React.FC = () => {
@@ -51,8 +51,11 @@ const TextTransformer: React.FC = () => {
     { action: 'rephrase' as TransformAction, icon: '🔄', color: 'text-info', label: 'Rephrase', useEmoji: true },
   ];
 
-  // Emoji button for add_emoji action
-  const emojiButton = { action: 'add_emoji' as TransformAction, icon: '✨', color: 'text-amber-500', label: 'Add Emoji', useEmoji: true };
+  // Extra buttons for text utilities
+  const utilityButtons = [
+    { action: 'add_emoji' as TransformAction, icon: '✨', color: 'text-amber-500', label: 'Add Emoji', useEmoji: true },
+    { action: 'fix_grammar' as TransformAction, icon: '🧰', color: 'text-blue-500', label: 'Fix Grammar', useEmoji: true }
+  ];
   
   // Tone button definitions
   const toneButtons = [
@@ -264,19 +267,21 @@ const TextTransformer: React.FC = () => {
               />
             ))}
           </div>
-          <div className="w-full">
-            <ActionButton
-              action={emojiButton.action}
-              icon={emojiButton.icon}
-              color={emojiButton.color}
-              label={emojiButton.label}
-              onClick={() => handleTransform(emojiButton.action)}
-              disabled={loading || !inputText.trim()}
-              used={usedActions.includes(emojiButton.action)}
-              selected={false}
-              useEmoji={emojiButton.useEmoji}
-              className="w-full"
-            />
+          <div className="grid grid-cols-2 gap-2">
+            {utilityButtons.map((button) => (
+              <ActionButton
+                key={button.action}
+                action={button.action}
+                icon={button.icon}
+                color={button.color}
+                label={button.label}
+                onClick={() => handleTransform(button.action)}
+                disabled={loading || !inputText.trim()}
+                used={usedActions.includes(button.action)}
+                selected={false}
+                useEmoji={button.useEmoji}
+              />
+            ))}
           </div>
         </div>
 

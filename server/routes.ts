@@ -410,6 +410,19 @@ TASK: Rewrite the given input text in a direct and to-the-point style.
 
 ${baseInstruction}`;
 
+    case "fix_grammar":
+      return `You are an expert writing assistant.
+Your task is to correct the grammar in the given input text without changing its meaning, tone, or structure.
+
+Follow these guidelines:
+- Fix all grammatical errors, including verb tense, subject-verb agreement, punctuation, article usage, prepositions, and sentence structure.
+- Do not rewrite or rephrase unnecessarily—only make grammatical improvements.
+- Preserve the original voice, tone, and style of the input text.
+- Ensure the corrected version reads naturally and fluently, as if written by a native speaker.
+- Avoid changing the length or intent of the original text.
+
+${baseInstruction}`;
+
     default:
       return `You are a professional text transformation specialist.
       

@@ -54,7 +54,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
       </button>
       
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-[#ffffff] border border-gray-200 rounded-md shadow-md z-50">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[#ffffff] border border-gray-200 rounded-md shadow-md z-[9999]">
           <div className="p-2 bg-[#ffffff]">
             <div className="text-xs font-bold mb-1">Perplexity</div>
             {perplexityModels.map((model) => (

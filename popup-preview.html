@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draftly Popup Preview</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+      background-color: #f0f0f0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .popup-container {
+      width: 380px;
+      height: 580px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      overflow: hidden;
+    }
+    
+    .popup-content {
+      width: 380px;
+      height: 580px;
+      padding: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    /* Popup Styles */
+    .draftly-app {
+      width: 380px;
+      max-height: 580px;
+      padding: 10px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .app-title {
+      margin: 0;
+      font-size: 20px;
+      color: #333;
+    }
+    
+    .model-selector {
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 12px;
+    }
+    
+    .text-input {
+      width: 100%;
+      height: 160px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      background-color: #F6F6F6;
+      margin-bottom: 10px;
+      resize: none;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    
+    .button-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .copy-button {
+      flex: 1;
+      padding: 8px;
+      background-color: #6668FF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    
+    .clear-button {
+      width: 36px;
+      padding: 8px;
+      background-color: #F95252;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .section-title {
+      font-weight: 500;
+      margin: 0 0 6px 0;
+      font-size: 13px;
+    }
+    
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    
+    .action-btn {
+      padding: 6px;
+      border: 1px solid #ddd;
+      background-color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .action-btn:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .action-btn.selected {
+      border: 2px solid #6668FF;
+      background-color: rgba(102,104,255,0.1);
+    }
+    
+    .loading-indicator {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255,255,255,0.8);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(102,104,255,0.2);
+      border-radius: 50%;
+      border-top-color: #6668FF;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-content">
+      <div class="draftly-app">
+        <div class="header">
+          <h1 class="app-title">Draftly</h1>
+          <div>
+            <select id="modelSelector" class="model-selector">
+              <option value="gpt-4o">GPT-4o (OpenAI)</option>
+              <option value="gpt-3.5-turbo">GPT-3.5 (OpenAI)</option>
+              <option value="llama-3">Llama 3 (Perplexity)</option>
+              <option value="llama-3-70b">Llama 3 70B (Perplexity)</option>
+            </select>
+          </div>
+        </div>
+
+        <textarea id="textInput" class="text-input" placeholder="Enter or paste your text here..."></textarea>
+
+        <div class="button-row">
+          <button id="copyButton" class="copy-button">COPY TEXT</button>
+          <button id="clearButton" class="clear-button">
+            <span style="font-size: 14px;">🗑️</span>
+          </button>
+        </div>
+
+        <div>
+          <p class="section-title">Transform:</p>
+          <div class="action-grid">
+            <button class="action-btn" data-action="simplify">✂️ Shorten</button>
+            <button class="action-btn" data-action="expand">✏️ Elaborate</button>
+            <button class="action-btn" data-action="rephrase">🔄 Rephrase</button>
+            <button class="action-btn" data-action="add_emoji">✨ Add Emoji</button>
+            <button class="action-btn" data-action="fix_grammar">🧰 Fix Grammar</button>
+          </div>
+
+          <p class="section-title">Tone:</p>
+          <div class="action-grid">
+            <button class="action-btn" data-action="formal">👨🏻‍💻 Formal</button>
+            <button class="action-btn" data-action="casual">😎 Casual</button>
+            <button class="action-btn" data-action="persuasive">😏 Persuasive</button>
+            <button class="action-btn" data-action="witty">🦊 Witty</button>
+            <button class="action-btn" data-action="empathetic">🫶 Empathetic</button>
+            <button class="action-btn" data-action="direct">🧠 Informed</button>
+          </div>
+        </div>
+
+        <div id="loadingIndicator" class="loading-indicator">
+          <div class="spinner"></div>
+          <p style="margin-top: 16px; color: #333;">Processing...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const textInput = document.getElementById('textInput');
+      const copyButton = document.getElementById('copyButton');
+      const clearButton = document.getElementById('clearButton');
+      const modelSelector = document.getElementById('modelSelector');
+      const actionButtons = document.querySelectorAll('.action-btn');
+      const loadingIndicator = document.getElementById('loadingIndicator');
+
+      // Add event listeners
+      copyButton.addEventListener('click', function() {
+        if (textInput.value) {
+          navigator.clipboard.writeText(textInput.value)
+            .then(() => {
+              copyButton.textContent = 'COPIED!';
+              setTimeout(() => {
+                copyButton.textContent = 'COPY TEXT';
+              }, 2000);
+            })
+            .catch(err => {
+              console.error('Failed to copy text: ', err);
+              copyButton.textContent = 'FAILED TO COPY';
+              setTimeout(() => {
+                copyButton.textContent = 'COPY TEXT';
+              }, 2000);
+            });
+        }
+      });
+
+      clearButton.addEventListener('click', function() {
+        textInput.value = '';
+        textInput.focus();
+      });
+
+      // Handle action button clicks
+      actionButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+          const action = this.dataset.action;
+          const selectedModel = modelSelector.value;
+          
+          // Get the text to transform (either selected text or all text)
+          let transformText = textInput.value;
+          const selectedText = textInput.value.substring(textInput.selectionStart, textInput.selectionEnd);
+          const hasSelection = selectedText.length > 0;
+          
+          if (hasSelection) {
+            transformText = selectedText;
+          }
+
+          if (!transformText) {
+            return; // No text to transform
+          }
+
+          // Disable all buttons in the same group
+          const isTransformAction = ['simplify', 'expand', 'rephrase', 'add_emoji', 'fix_grammar'].includes(action);
+          const isToneAction = ['formal', 'casual', 'persuasive', 'witty', 'empathetic', 'direct'].includes(action);
+          
+          actionButtons.forEach(btn => {
+            const btnAction = btn.dataset.action;
+            const btnIsTransformAction = ['simplify', 'expand', 'rephrase', 'add_emoji', 'fix_grammar'].includes(btnAction);
+            const btnIsToneAction = ['formal', 'casual', 'persuasive', 'witty', 'empathetic', 'direct'].includes(btnAction);
+            
+            // Deselect all buttons in the same category
+            if ((isTransformAction && btnIsTransformAction) || (isToneAction && btnIsToneAction)) {
+              btn.classList.remove('selected');
+            }
+          });
+          
+          // Select the clicked button
+          this.classList.add('selected');
+
+          // Show loading indicator
+          loadingIndicator.style.display = 'flex';
+          
+          try {
+            // For this simplified version, we'll just mock the transformation
+            const mockTransform = (text, action) => {
+              switch(action) {
+                case 'simplify': return `${text} (simplified)`;
+                case 'expand': return `${text} (expanded with more details and examples)`;
+                case 'rephrase': return `${text} (rephrased differently)`;
+                case 'add_emoji': return `${text} 😊✨`;
+                case 'fix_grammar': return `${text} (grammar fixed)`;
+                case 'formal': return `${text} (in a formal tone)`;
+                case 'casual': return `${text} (in a casual tone)`;
+                case 'persuasive': return `${text} (in a persuasive tone)`;
+                case 'witty': return `${text} (with a witty twist)`;
+                case 'empathetic': return `${text} (with empathy)`;
+                case 'direct': return `${text} (direct and informed)`;
+                default: return text;
+              }
+            };
+
+            // Simulate network delay
+            setTimeout(() => {
+              const transformedText = mockTransform(transformText, action);
+              
+              // Update only the selected text or entire text area
+              if (hasSelection) {
+                const beforeSelection = textInput.value.substring(0, textInput.selectionStart);
+                const afterSelection = textInput.value.substring(textInput.selectionEnd);
+                textInput.value = beforeSelection + transformedText + afterSelection;
+              } else {
+                textInput.value = transformedText;
+              }
+              
+              loadingIndicator.style.display = 'none';
+            }, 800);
+            
+          } catch (error) {
+            console.error('Error transforming text:', error);
+            loadingIndicator.style.display = 'none';
+            alert('Failed to transform text. Please try again.');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

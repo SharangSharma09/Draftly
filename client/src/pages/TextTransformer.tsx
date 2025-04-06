@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { ModelSelector } from '@/components/ModelSelector';
 import { ActionButton } from '@/components/ActionButton';
 import { CopyButton } from '@/components/CopyButton';
 import { ClearButton } from '@/components/ClearButton';
+import { UndoButton } from '@/components/UndoButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { EmojiToggle } from '@/components/EmojiToggle';
 import { transformText } from '@/lib/transformations';
@@ -26,6 +27,22 @@ const TextTransformer: React.FC = () => {
   const [selectionStart, setSelectionStart] = useState<number | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // State for previous versions (undo history)
+  const [previousVersions, setPreviousVersions] = useState<string[]>([]);
+  
+  // Handle undo functionality
+  const handleUndo = () => {
+    if (previousVersions.length > 0) {
+      const prevVersions = [...previousVersions];
+      const lastVersion = prevVersions.pop();
+      
+      if (lastVersion) {
+        setInputText(lastVersion);
+        setPreviousVersions(prevVersions);
+      }
+    }
+  };
 
   // Action button definitions with their respective emoji icons and colors
   const actionButtons = [
@@ -86,6 +103,17 @@ const TextTransformer: React.FC = () => {
                         selectionEnd !== null && 
                         selectionStart !== selectionEnd;
                         
+      // Save the current text to previousVersions (limit to 3 versions)
+      setPreviousVersions(prev => {
+        const newPrev = [...prev];
+        // Add current text to previous versions and limit to 3 items
+        if (newPrev.length >= 3) {
+          newPrev.shift(); // Remove oldest version if we have 3 already
+        }
+        newPrev.push(inputText);
+        return newPrev;
+      });
+      
       if (hasSelection) {
         // Only transform the selected portion
         const selectedText = inputText.substring(selectionStart!, selectionEnd!);
@@ -134,6 +162,8 @@ const TextTransformer: React.FC = () => {
     // Reset selection state
     setSelectionStart(null);
     setSelectionEnd(null);
+    // Clear undo history
+    setPreviousVersions([]);
     // Note: We don't reset selectedModel here as requested
     
     // Focus on the textarea after clearing
@@ -199,7 +229,10 @@ const TextTransformer: React.FC = () => {
           </div>
           <div className="w-full mt-1 flex gap-2">
             <CopyButton text={inputText} />
-            <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
+            <div className="flex gap-2">
+              <UndoButton onClick={handleUndo} disabled={previousVersions.length === 0} />
+              <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
+            </div>
           </div>
         </div>
 
@@ -216,6 +249,17 @@ const TextTransformer: React.FC = () => {
                 setLoading(true);
                 try {
                   const emojiAction = checked ? 'add_emoji' : 'remove_emoji';
+                  
+                  // Save the current text to previousVersions before making changes
+                  setPreviousVersions(prev => {
+                    const newPrev = [...prev];
+                    // Add current text to previous versions and limit to 3 items
+                    if (newPrev.length >= 3) {
+                      newPrev.shift(); // Remove oldest version if we have 3 already
+                    }
+                    newPrev.push(inputText);
+                    return newPrev;
+                  });
                   
                   // Check if there's a text selection
                   const hasSelection = selectionStart !== null && 

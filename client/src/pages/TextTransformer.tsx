@@ -199,7 +199,7 @@ const TextTransformer: React.FC = () => {
       {/* Main content area */}
       <main className="flex-1 p-4 pt-5 flex flex-col gap-4 overflow-auto">
         {/* Control buttons section - now positioned above the text input */}
-        <div className="w-full flex justify-between mb-2">
+        <div className="w-full flex justify-between mb-1">
           <div className="flex gap-2">
             <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
             <UndoButton onClick={handleUndo} disabled={previousVersions.length === 0} />
@@ -210,7 +210,7 @@ const TextTransformer: React.FC = () => {
         </div>
         
         {/* Text input section */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <div className="relative">
             <Textarea
               id="input-text"
@@ -250,8 +250,8 @@ const TextTransformer: React.FC = () => {
         </div>
 
         {/* Generate Text section */}
-        <div className="mb-4 pt-5">
-          <div className="flex items-center mb-2">
+        <div className="mb-2 pt-3">
+          <div className="flex items-center mb-1">
             <h2 className="text-xs font-medium text-[#7B7B7B] mr-2">GENERATE TEXT</h2>
             <label className="relative inline-flex items-center cursor-pointer">
               <input

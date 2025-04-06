@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Create the app structure
   rootElement.innerHTML = `
-    <div style="width: 400px; height: 600px; padding: 16px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h1 style="margin: 0; font-size: 24px; color: #333;">Draftly</h1>
+    <div style="width: 380px; max-height: 580px; padding: 10px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; overflow: hidden;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h1 style="margin: 0; font-size: 20px; color: #333;">Draftly</h1>
         <div style="display: flex; gap: 8px;">
-          <select id="modelSelector" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+          <select id="modelSelector" style="padding: 6px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px;">
             <option value="gpt-4o">GPT-4o (OpenAI)</option>
             <option value="gpt-3.5-turbo">GPT-3.5 (OpenAI)</option>
             <option value="llama-3">Llama 3 (Perplexity)</option>
@@ -18,33 +18,33 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
 
       <textarea id="textInput" placeholder="Enter or paste your text here..." 
-        style="width: 100%; height: 200px; padding: 12px; border-radius: 12px; border: 1px solid #ddd; background-color: #F6F6F6; margin-bottom: 16px; resize: none; font-family: inherit;"></textarea>
+        style="width: 100%; height: 160px; padding: 10px; border-radius: 12px; border: 1px solid #ddd; background-color: #F6F6F6; margin-bottom: 10px; resize: none; font-family: inherit; box-sizing: border-box;"></textarea>
 
-      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-        <button id="copyButton" style="flex: 1; padding: 10px; background-color: #6668FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">COPY TEXT</button>
-        <button id="clearButton" style="width: 42px; padding: 10px; background-color: #F95252; color: white; border: none; border-radius: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center;">
-          <span style="font-size: 18px;">🗑️</span>
+      <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+        <button id="copyButton" style="flex: 1; padding: 8px; background-color: #6668FF; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 13px;">COPY TEXT</button>
+        <button id="clearButton" style="width: 36px; padding: 8px; background-color: #F95252; color: white; border: none; border-radius: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center;">
+          <span style="font-size: 14px;">🗑️</span>
         </button>
       </div>
 
       <div>
-        <p style="font-weight: 500; margin-bottom: 8px;">Transform:</p>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
-          <button class="action-btn" data-action="simplify" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">✂️ Shorten</button>
-          <button class="action-btn" data-action="expand" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">✏️ Elaborate</button>
-          <button class="action-btn" data-action="rephrase" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">🔄 Rephrase</button>
-          <button class="action-btn" data-action="add_emoji" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">✨ Add Emoji</button>
-          <button class="action-btn" data-action="fix_grammar" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">🧰 Fix Grammar</button>
+        <p style="font-weight: 500; margin: 0 0 6px 0; font-size: 13px;">Transform:</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px;">
+          <button class="action-btn" data-action="simplify" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">✂️ Shorten</button>
+          <button class="action-btn" data-action="expand" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">✏️ Elaborate</button>
+          <button class="action-btn" data-action="rephrase" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">🔄 Rephrase</button>
+          <button class="action-btn" data-action="add_emoji" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">✨ Add Emoji</button>
+          <button class="action-btn" data-action="fix_grammar" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">🧰 Fix Grammar</button>
         </div>
 
-        <p style="font-weight: 500; margin-bottom: 8px;">Tone:</p>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-          <button class="action-btn" data-action="formal" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">👨🏻‍💻 Formal</button>
-          <button class="action-btn" data-action="casual" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">😎 Casual</button>
-          <button class="action-btn" data-action="persuasive" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">😏 Persuasive</button>
-          <button class="action-btn" data-action="witty" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">🦊 Witty</button>
-          <button class="action-btn" data-action="empathetic" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">🫶 Empathetic</button>
-          <button class="action-btn" data-action="direct" style="padding: 8px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer;">🧠 Informed</button>
+        <p style="font-weight: 500; margin: 0 0 6px 0; font-size: 13px;">Tone:</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+          <button class="action-btn" data-action="formal" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">👨🏻‍💻 Formal</button>
+          <button class="action-btn" data-action="casual" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">😎 Casual</button>
+          <button class="action-btn" data-action="persuasive" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">😏 Persuasive</button>
+          <button class="action-btn" data-action="witty" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">🦊 Witty</button>
+          <button class="action-btn" data-action="empathetic" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">🫶 Empathetic</button>
+          <button class="action-btn" data-action="direct" style="padding: 6px; border: 1px solid #ddd; background-color: white; border-radius: 6px; cursor: pointer; font-size: 12px;">🧠 Informed</button>
         </div>
       </div>
 

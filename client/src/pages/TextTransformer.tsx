@@ -55,7 +55,7 @@ const TextTransformer: React.FC = () => {
   // Extra buttons for text utilities
   const utilityButtons = [
     { action: 'add_emoji' as TransformAction, icon: '✨', color: 'text-amber-500', label: 'Add Emoji', useEmoji: true },
-    { action: 'fix_grammar' as TransformAction, icon: '🧰', color: 'text-blue-500', label: 'Fix Grammar', useEmoji: true }
+    { action: 'fix_grammar' as TransformAction, icon: '🛠️', color: 'text-blue-500', label: 'Fix', useEmoji: true }
   ];
   
   // Tone button definitions

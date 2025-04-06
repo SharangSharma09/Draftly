@@ -199,12 +199,14 @@ const TextTransformer: React.FC = () => {
       {/* Main content area */}
       <main className="flex-1 p-4 pt-5 flex flex-col gap-4 overflow-auto">
         {/* Control buttons section - now positioned above the text input */}
-        <div className="w-full flex gap-2 mb-2">
+        <div className="w-full flex justify-between mb-2">
           <div className="flex gap-2">
             <ClearButton onClick={handleClearText} disabled={!inputText.trim()} />
             <UndoButton onClick={handleUndo} disabled={previousVersions.length === 0} />
           </div>
-          <CopyButton text={inputText} />
+          <div>
+            <CopyButton text={inputText} />
+          </div>
         </div>
         
         {/* Text input section */}

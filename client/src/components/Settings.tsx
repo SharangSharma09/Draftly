@@ -82,7 +82,7 @@ export const Settings = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg p-4 w-80 z-50 border border-gray-200">
+        <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg p-4 w-80 z-[10000] border border-gray-200">
           <h3 className="text-lg font-semibold mb-4">API Settings</h3>
           
           <div className="mb-4">

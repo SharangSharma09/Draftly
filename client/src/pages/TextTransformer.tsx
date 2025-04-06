@@ -32,6 +32,9 @@ const TextTransformer: React.FC = () => {
   // State for previous versions (undo history)
   const [previousVersions, setPreviousVersions] = useState<string[]>([]);
   
+  // Save original text before generate text mode
+  const [savedTextBeforeGenerate, setSavedTextBeforeGenerate] = useState<string>('');
+  
   // Handle undo functionality
   const handleUndo = () => {
     if (previousVersions.length > 0) {
@@ -171,6 +174,8 @@ const TextTransformer: React.FC = () => {
     setSelectionEnd(null);
     // Clear undo history
     setPreviousVersions([]);
+    // Clear saved text for generate mode
+    setSavedTextBeforeGenerate('');
     // Note: We don't reset selectedModel here as requested
     
     // Focus on the textarea after clearing
@@ -252,14 +257,22 @@ const TextTransformer: React.FC = () => {
         {/* Generate Text section */}
         <div className="mb-2 pt-3">
           <div className="flex items-center mb-1">
-            <h2 className="text-xs font-medium text-[#7B7B7B] mr-2">GENERATE TEXT</h2>
+            <h2 className={`text-xs font-medium mr-2 ${selectedTransformAction === 'generate_text' ? 'text-[#6668FF]' : 'text-[#7B7B7B]'}`}>GENERATE TEXT</h2>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 className="sr-only peer"
                 onChange={(e) => {
                   if (e.target.checked) {
+                    // Save current text before generating
+                    setSavedTextBeforeGenerate(inputText);
                     handleTransform('generate_text');
+                  } else {
+                    // Revert to saved text when toggling off
+                    setSelectedTransformAction(null);
+                    if (savedTextBeforeGenerate) {
+                      setInputText(savedTextBeforeGenerate);
+                    }
                   }
                 }}
                 checked={selectedTransformAction === 'generate_text'}

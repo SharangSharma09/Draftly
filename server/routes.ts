@@ -4,6 +4,11 @@ import { storage } from "./storage";
 import OpenAI from "openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Add a route to serve the popup preview
+  app.get("/popup-preview.html", (req: Request, res: Response) => {
+    res.sendFile("public/popup-preview.html", { root: import.meta.dirname });
+  });
+
   // Add a route to handle text transformations
   app.post("/api/transform", async (req: Request, res: Response) => {
     try {

@@ -194,7 +194,7 @@ const TextTransformer: React.FC = () => {
       </header>
 
       {/* Main content area */}
-      <main className="flex-1 p-4 flex flex-col gap-4 overflow-auto">
+      <main className="flex-1 p-4 pt-10 flex flex-col gap-4 overflow-auto">
         {/* Text input section */}
         <div className="flex flex-col gap-2">
           <div className="relative">

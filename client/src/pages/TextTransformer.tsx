@@ -7,6 +7,7 @@ import { ClearButton } from '@/components/ClearButton';
 import { UndoButton } from '@/components/UndoButton';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 import { EmojiToggle } from '@/components/EmojiToggle';
+import { Settings } from '@/components/Settings';
 import { transformText } from '@/lib/transformations';
 
 export type ModelProvider = 'openai' | 'perplexity' | 'other';
@@ -182,8 +183,10 @@ const TextTransformer: React.FC = () => {
     <div className="bg-white text-gray-800 flex flex-col h-screen">
       {/* Header section */}
       <header className="p-4 bg-white">
-        <div className="flex justify-center mb-2">
+        <div className="flex justify-between items-center mb-2">
+          <div className="w-6"></div> {/* Spacer for balance */}
           <h1 className="text-xl font-semibold text-gray-800">Draftly</h1>
+          <Settings />
         </div>
         <div className="flex flex-col w-full">
           <ModelSelector

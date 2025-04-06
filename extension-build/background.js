@@ -1,4 +1,3 @@
-
 // Background script for the Draftly Chrome extension
 // This script handles setting up the side panel functionality
 
@@ -12,4 +11,3 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.action.onClicked.addListener((tab) => {
   chrome.sidePanel.open({ tabId: tab.id });
 });
-

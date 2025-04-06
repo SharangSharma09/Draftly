@@ -1,5 +1,20 @@
 import { LLMModel, TransformAction } from '@/pages/TextTransformer';
 
+// Function to get the API key from Chrome storage or environment
+async function getOpenAIApiKey(): Promise<string> {
+  // Check if we're in a Chrome extension context
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: 'getApiKeys' }, (response) => {
+        resolve(response?.openaiApiKey || '');
+      });
+    });
+  } else {
+    // Fallback to environment variable when not in extension context
+    return import.meta.env.OPENAI_API_KEY || '';
+  }
+}
+
 // Function to transform text using OpenAI API
 export async function callOpenAI(
   text: string,
@@ -16,6 +31,14 @@ export async function callOpenAI(
   }
   
   try {
+    // Get the API key from storage
+    const apiKey = await getOpenAIApiKey();
+    
+    if (!apiKey) {
+      console.warn('OpenAI API key not available');
+      return `Error: OpenAI API key not set. Please set your API key in the extension settings.`;
+    }
+    
     // Create the system prompt based on the action
     const systemPrompt = createSystemPrompt(action);
     
@@ -36,13 +59,13 @@ export async function callOpenAI(
       systemPrompt
     });
     
-    console.log('OpenAI API Key available:', !!import.meta.env.OPENAI_API_KEY);
+    console.log('OpenAI API Key available:', !!apiKey);
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.OPENAI_API_KEY}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify(requestBody)
     });

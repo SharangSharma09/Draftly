@@ -124,6 +124,21 @@ function createSystemPrompt(action: TransformAction): string {
   const baseInstruction = "IMPORTANT: DO NOT add any introductory phrases, disclaimers, or explanations like 'Here's a simplified version' or 'I've made this more formal'. Return ONLY the transformed text.";
   
   switch (action) {
+    case 'generate_text':
+      return `You are an expert communication assistant.
+Your task is to generate an appropriate and thoughtful reply to a given message, taking into account both the length and tone of the original input.
+
+Follow these guidelines:
+- Match the tone of the input message. If the message is casual, keep the reply friendly and conversational. If it's formal, ensure the reply is professional and respectful.
+- Adjust the length of your reply to align with the input:
+  - For short messages, keep the response concise and to the point.
+  - For longer or more detailed messages, provide a well-rounded and complete reply that acknowledges the key points.
+- Always maintain clarity, coherence, and relevance to the original message.
+- Feel free to include appreciation, confirmation, follow-ups, or questions where appropriate, depending on the context.
+- Ensure the reply feels natural and human, not templated.
+
+${baseInstruction}`;
+    
     case 'simplify':
       return `You are an expert text editor specializing in concision and clarity.
       
@@ -289,6 +304,9 @@ function mockTransformResponse(text: string, action: TransformAction): string {
   const preview = text.length > 100 ? text.substring(0, 100) + '...' : text;
   
   switch (action) {
+    case 'generate_text':
+      return `Thank you for your message. I've carefully considered your points and would like to respond in a way that addresses your concerns while maintaining a constructive dialogue. Let me know if you would like any clarification on the points I've shared.`;
+      
     case 'simplify':
       return `${preview.substring(0, 40)}... [shortened version]`;
     

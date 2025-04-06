@@ -3,7 +3,13 @@ import { LLMModel, TransformAction } from '@/pages/TextTransformer';
 // Function to get the API key from Chrome storage or environment
 async function getOpenAIApiKey(): Promise<string> {
   // Check if we're in a Chrome extension context
-  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get(['openaiApiKey'], (result) => {
+        resolve(result.openaiApiKey || '');
+      });
+    });
+  } else if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({ type: 'getApiKeys' }, (response) => {
         resolve(response?.openaiApiKey || '');
@@ -61,22 +67,42 @@ export async function callOpenAI(
     
     console.log('OpenAI API Key available:', !!apiKey);
     
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(requestBody)
-    });
+    // Perform the actual API request
+    console.log('Making OpenAI API request...');
+    let apiResponse;
+    try {
+      apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(requestBody),
+        // Add these options to improve cross-origin request handling
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin'
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('OpenAI API Error Response:', errorData);
-      throw new Error(`OpenAI API error: ${errorData.error?.message || response.statusText}`);
+      console.log('OpenAI API response status:', apiResponse.status);
+      
+      if (!apiResponse.ok) {
+        let errorMessage = `HTTP error! Status: ${apiResponse.status}`;
+        try {
+          const errorData = await apiResponse.json();
+          console.error('OpenAI API Error Response:', errorData);
+          errorMessage = `OpenAI API error: ${errorData.error?.message || apiResponse.statusText}`;
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+        }
+        throw new Error(errorMessage);
+      }
+    } catch (fetchError) {
+      console.error('Fetch to OpenAI API failed:', fetchError);
+      throw fetchError;
     }
 
-    const data = await response.json();
+    const data = await apiResponse.json();
     console.log('OpenAI API Response:', {
       model: data.model,
       content: data.choices[0].message.content.substring(0, 100) + (data.choices[0].message.content.length > 100 ? '...' : ''),

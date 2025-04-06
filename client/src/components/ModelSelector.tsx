@@ -44,7 +44,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
     <div className="relative w-full">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded-md text-sm focus:outline-none appearance-none cursor-pointer flex items-center justify-between"
+        className="w-full bg-white border border-gray-300 text-gray-700 py-1 px-3 rounded-md text-sm focus:outline-none appearance-none cursor-pointer flex items-center justify-between"
       >
         <div className="flex items-center">
           {selectedOption.icon && <span className="material-icons text-sm mr-1">{selectedOption.icon}</span>}

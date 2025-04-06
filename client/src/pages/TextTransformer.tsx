@@ -181,7 +181,7 @@ const TextTransformer: React.FC = () => {
   return (
     <div className="bg-white text-gray-800 flex flex-col h-screen">
       {/* Header section */}
-      <header className="p-4 border-b border-gray-200 bg-white shadow-sm">
+      <header className="p-4 bg-white shadow-sm">
         <div className="flex justify-center mb-2">
           <h1 className="text-xl font-semibold text-gray-800">Draftly</h1>
         </div>
@@ -219,7 +219,7 @@ const TextTransformer: React.FC = () => {
                 setSelectionEnd(target.selectionEnd);
               }}
               placeholder="Enter your text here"
-              className="w-full h-52 bg-[#F6F6F6] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl text-xl"
+              className="w-full h-60 bg-[#F6F6F6] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-xl text-xl"
             />
             
             {loading && <LoadingIndicator />}

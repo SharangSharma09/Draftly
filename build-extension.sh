@@ -14,9 +14,10 @@ cp -r dist/* extension-build/
 # Copy index.html to the root
 cp extension-build/public/index.html extension-build/
 
-# Fix asset paths in index.html
+# Fix asset paths in index.html and add base tag for routing
 sed -i 's|src="/assets/|src="public/assets/|g' extension-build/index.html
 sed -i 's|href="/assets/|href="public/assets/|g' extension-build/index.html
+sed -i '/<head>/a \    <base href="/">' extension-build/index.html
 
 # Copy the manifest file
 cp client/manifest.json extension-build/

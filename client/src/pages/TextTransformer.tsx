@@ -64,7 +64,7 @@ const TextTransformer: React.FC = () => {
     { action: 'persuasive' as TransformAction, icon: '😏', color: 'text-warning', label: 'Persuasive' },
     { action: 'witty' as TransformAction, icon: '🦊', color: 'text-secondary', label: 'Witty' },
     { action: 'empathetic' as TransformAction, icon: '🫶', color: 'text-rose-500', label: 'Empathetic' },
-    { action: 'direct' as TransformAction, icon: '🧠', color: 'text-emerald-500', label: 'Knowledgable' },
+    { action: 'direct' as TransformAction, icon: '🧠', color: 'text-emerald-500', label: 'Informed' },
   ];
 
   // Helper to check if an action is a transform or tone action
@@ -74,7 +74,7 @@ const TextTransformer: React.FC = () => {
   
   const isToneAction = (action: TransformAction): boolean => {
     return ['formal', 'casual', 'persuasive', 'witty', 'empathetic', 'direct'].includes(action);
-    // Note: We still use 'direct' in the code since that's the action value, even though the label is "Knowledgable"
+    // Note: We still use 'direct' in the code since that's the action value, even though the label is "Informed"
   };
 
   const handleTransform = async (action: TransformAction) => {
@@ -245,7 +245,7 @@ const TextTransformer: React.FC = () => {
 
         
         {/* Action buttons section */}
-        <div className="mb-4">
+        <div className="mb-4 pt-5">
           <div className="mb-2">
             <h2 className="text-sm font-medium text-gray-700">TRANSFORM TEXT</h2>
           </div>

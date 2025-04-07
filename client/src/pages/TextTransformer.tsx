@@ -23,6 +23,7 @@ const TextTransformer: React.FC = () => {
   const [usedActions, setUsedActions] = useState<TransformAction[]>([]);
   const [selectedTransformAction, setSelectedTransformAction] = useState<TransformAction | null>(null);
   const [selectedToneAction, setSelectedToneAction] = useState<TransformAction | null>(null);
+  const [generateToggleChecked, setGenerateToggleChecked] = useState<boolean>(false);
   
   // Track text selection state
   const [selectionStart, setSelectionStart] = useState<number | null>(null);
@@ -107,6 +108,14 @@ const TextTransformer: React.FC = () => {
       ]);
     }
     
+    // Sync the generate text toggle state with the action
+    if (action === 'generate_text') {
+      setGenerateToggleChecked(true);
+    } else if (selectedTransformAction === 'generate_text') {
+      // If we're changing from generate_text to another action, turn off the toggle
+      setGenerateToggleChecked(false);
+    }
+    
     try {
       // Check if there's a text selection
       const hasSelection = selectionStart !== null && 
@@ -174,6 +183,8 @@ const TextTransformer: React.FC = () => {
     setSelectionEnd(null);
     // Clear undo history
     setPreviousVersions([]);
+    // Reset generate toggle state
+    setGenerateToggleChecked(false);
     // Clear saved text for generate mode
     setSavedTextBeforeGenerate('');
     // Note: We don't reset selectedModel here as requested
@@ -257,16 +268,22 @@ const TextTransformer: React.FC = () => {
         {/* Generate Text section */}
         <div className="mb-2 pt-3">
           <div className="flex items-center mb-1">
-            <h2 className={`text-xs font-medium mr-2 ${selectedTransformAction === 'generate_text' ? 'text-[#6668FF]' : 'text-[#7B7B7B]'}`}>GENERATE TEXT</h2>
+            <h2 className={`text-xs font-medium mr-2 ${generateToggleChecked ? 'text-[#6668FF]' : 'text-[#7B7B7B]'}`}>GENERATE TEXT</h2>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 className="sr-only peer"
                 onChange={(e) => {
+                  // Update toggle state first (for proper animation)
+                  setGenerateToggleChecked(e.target.checked);
+                  
                   if (e.target.checked) {
                     // Save current text before generating
                     setSavedTextBeforeGenerate(inputText);
-                    handleTransform('generate_text');
+                    // Call transform after a brief delay to allow animation to complete
+                    setTimeout(() => {
+                      handleTransform('generate_text');
+                    }, 50);
                   } else {
                     // Revert to saved text when toggling off
                     setSelectedTransformAction(null);
@@ -275,7 +292,7 @@ const TextTransformer: React.FC = () => {
                     }
                   }
                 }}
-                checked={selectedTransformAction === 'generate_text'}
+                checked={generateToggleChecked}
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#6668FF]"></div>
             </label>

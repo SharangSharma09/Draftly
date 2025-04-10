@@ -103,8 +103,8 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
             
             <div className="h-px bg-gray-200 my-2"></div>
             
-            <div className="text-xs font-bold mb-1">Other Models</div>
-            {otherModels.map((model) => (
+            <div className="text-xs font-bold mb-1">Anthropic</div>
+            {anthropicModels.map((model) => (
               <div
                 key={model.value}
                 onClick={() => {
@@ -119,6 +119,66 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
                 {model.label}
               </div>
             ))}
+            
+            <div className="h-px bg-gray-200 my-2"></div>
+            
+            <div className="text-xs font-bold mb-1">Google</div>
+            {googleModels.map((model) => (
+              <div
+                key={model.value}
+                onClick={() => {
+                  onSelectModel(model.value);
+                  setIsOpen(false);
+                }}
+                className={`py-1 px-2 rounded-xl cursor-pointer flex items-center hover:bg-gray-100 ${
+                  selectedModel === model.value ? 'bg-[#6668FF]/10 text-[#6668FF] font-medium' : ''
+                }`}
+              >
+                {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
+                {model.label}
+              </div>
+            ))}
+            
+            <div className="h-px bg-gray-200 my-2"></div>
+            
+            <div className="text-xs font-bold mb-1">Deepseek</div>
+            {deepseekModels.map((model) => (
+              <div
+                key={model.value}
+                onClick={() => {
+                  onSelectModel(model.value);
+                  setIsOpen(false);
+                }}
+                className={`py-1 px-2 rounded-xl cursor-pointer flex items-center hover:bg-gray-100 ${
+                  selectedModel === model.value ? 'bg-[#6668FF]/10 text-[#6668FF] font-medium' : ''
+                }`}
+              >
+                {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
+                {model.label}
+              </div>
+            ))}
+            
+            {otherModels.length > 0 && (
+              <>
+                <div className="h-px bg-gray-200 my-2"></div>
+                <div className="text-xs font-bold mb-1">Other Models</div>
+                {otherModels.map((model) => (
+                  <div
+                    key={model.value}
+                    onClick={() => {
+                      onSelectModel(model.value);
+                      setIsOpen(false);
+                    }}
+                    className={`py-1 px-2 rounded-xl cursor-pointer flex items-center hover:bg-gray-100 ${
+                      selectedModel === model.value ? 'bg-[#6668FF]/10 text-[#6668FF] font-medium' : ''
+                    }`}
+                  >
+                    {model.icon && <span className="material-icons text-sm mr-2">{model.icon}</span>}
+                    {model.label}
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         </div>
       )}

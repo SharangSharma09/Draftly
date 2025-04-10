@@ -372,8 +372,11 @@ const TextTransformer: React.FC = () => {
              selectedModel === 'gpt-4o' ? 'GPT-4o' : 
              selectedModel === 'llama-3' ? 'Llama 3 (Small)' :
              selectedModel === 'llama-3-70b' ? 'Llama 3 (Large)' :
-             selectedModel === 'claude-2' ? 'Claude 2' : 
-             selectedModel === 'palm' ? 'PaLM' : selectedModel}
+             selectedModel === 'claude-3-opus' ? 'Claude 3 Opus' : 
+             selectedModel === 'claude-3-sonnet' ? 'Claude 3 Sonnet' : 
+             selectedModel === 'gemini-pro' ? 'Gemini Pro' : 
+             selectedModel === 'deepseek-coder' ? 'Deepseek Coder' : 
+             selectedModel}
           </span>
         </p>
       </footer>

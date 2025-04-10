@@ -145,3 +145,5 @@ function mockTransformResponse(text: string, action: TransformAction): string {
       return `${text} [Grammar fixed version would appear here with a working API key]`;
     default:
       return text;
+  }
+}

@@ -3,13 +3,19 @@ import React, { useState, useEffect } from 'react';
 interface ApiKeys {
   openaiApiKey: string;
   perplexityApiKey: string;
+  anthropicApiKey: string;
+  googleApiKey: string;
+  deepseekApiKey: string;
 }
 
 export const Settings = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [apiKeys, setApiKeys] = useState<ApiKeys>({
     openaiApiKey: '',
-    perplexityApiKey: ''
+    perplexityApiKey: '',
+    anthropicApiKey: '',
+    googleApiKey: '',
+    deepseekApiKey: ''
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -21,7 +27,10 @@ export const Settings = () => {
         if (response) {
           setApiKeys({
             openaiApiKey: response.openaiApiKey || '',
-            perplexityApiKey: response.perplexityApiKey || ''
+            perplexityApiKey: response.perplexityApiKey || '',
+            anthropicApiKey: response.anthropicApiKey || '',
+            googleApiKey: response.googleApiKey || '',
+            deepseekApiKey: response.deepseekApiKey || ''
           });
         }
       });
@@ -45,7 +54,10 @@ export const Settings = () => {
         { 
           type: 'setApiKeys', 
           openaiApiKey: apiKeys.openaiApiKey,
-          perplexityApiKey: apiKeys.perplexityApiKey
+          perplexityApiKey: apiKeys.perplexityApiKey,
+          anthropicApiKey: apiKeys.anthropicApiKey,
+          googleApiKey: apiKeys.googleApiKey,
+          deepseekApiKey: apiKeys.deepseekApiKey
         }, 
         (response) => {
           setIsSaving(false);
@@ -116,6 +128,57 @@ export const Settings = () => {
             />
             <p className="mt-1 text-xs text-gray-500">
               Required for Llama-3 models
+            </p>
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Anthropic API Key
+            </label>
+            <input
+              type="password"
+              name="anthropicApiKey"
+              value={apiKeys.anthropicApiKey}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              placeholder="sk-ant-..."
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Required for Claude-3 models
+            </p>
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Google API Key
+            </label>
+            <input
+              type="password"
+              name="googleApiKey"
+              value={apiKeys.googleApiKey}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              placeholder="AIza..."
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Required for Gemini models
+            </p>
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Deepseek API Key
+            </label>
+            <input
+              type="password"
+              name="deepseekApiKey"
+              value={apiKeys.deepseekApiKey}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              placeholder="ds-..."
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Required for Deepseek models
             </p>
           </div>
 

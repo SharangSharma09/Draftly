@@ -10,8 +10,8 @@ import { EmojiToggle } from '@/components/EmojiToggle';
 import { Settings } from '@/components/Settings';
 import { transformText } from '@/lib/transformations';
 
-export type ModelProvider = 'openai' | 'perplexity' | 'other';
-export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-2' | 'palm';
+export type ModelProvider = 'openai' | 'perplexity' | 'anthropic' | 'google' | 'deepseek' | 'other';
+export type LLMModel = 'gpt-3.5-turbo' | 'gpt-4o' | 'llama-3' | 'llama-3-70b' | 'claude-3-opus' | 'claude-3-sonnet' | 'gemini-pro' | 'deepseek-coder';
 export type TransformAction = 'generate_text' | 'simplify' | 'expand' | 'rephrase' | 'formal' | 'casual' | 'persuasive' | 'witty' | 'empathetic' | 'direct' | 'add_emoji' | 'remove_emoji' | 'fix_grammar';
 export type EmojiOption = 'on' | 'off';
 

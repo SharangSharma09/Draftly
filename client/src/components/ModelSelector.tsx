@@ -22,9 +22,15 @@ const models: ModelOption[] = [
   { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', provider: 'openai', icon: 'auto_awesome' },
   { value: 'gpt-4o', label: 'GPT-4o', provider: 'openai', icon: 'auto_awesome' },
   
-  // Other models (mocked in this implementation)
-  { value: 'claude-2', label: 'Claude 2', provider: 'other', icon: 'psychology' },
-  { value: 'palm', label: 'PaLM', provider: 'other', icon: 'psychology' },
+  // Anthropic models
+  { value: 'claude-3-opus', label: 'Claude 3 Opus', provider: 'anthropic', icon: 'psychology' },
+  { value: 'claude-3-sonnet', label: 'Claude 3 Sonnet', provider: 'anthropic', icon: 'psychology' },
+  
+  // Google models
+  { value: 'gemini-pro', label: 'Gemini Pro', provider: 'google', icon: 'smart_toy' },
+  
+  // Deepseek models
+  { value: 'deepseek-coder', label: 'Deepseek Coder', provider: 'deepseek', icon: 'code' },
 ];
 
 export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onSelectModel }) => {
@@ -38,6 +44,9 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ selectedModel, onS
 
   const perplexityModels = getModelsByProvider('perplexity');
   const openaiModels = getModelsByProvider('openai');
+  const anthropicModels = getModelsByProvider('anthropic');
+  const googleModels = getModelsByProvider('google');
+  const deepseekModels = getModelsByProvider('deepseek');
   const otherModels = getModelsByProvider('other');
   
   return (

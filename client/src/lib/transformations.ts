@@ -6,6 +6,12 @@ function getModelProvider(model: LLMModel): ModelProvider {
     return 'openai';
   } else if (['llama-3', 'llama-3-70b'].includes(model)) {
     return 'perplexity';
+  } else if (['claude-3-opus', 'claude-3-sonnet'].includes(model)) {
+    return 'anthropic';
+  } else if (['gemini-pro'].includes(model)) {
+    return 'google';
+  } else if (['deepseek-coder'].includes(model)) {
+    return 'deepseek';
   } else {
     return 'other';
   }
@@ -14,6 +20,9 @@ function getModelProvider(model: LLMModel): ModelProvider {
 // Import direct API calling functions
 import { callOpenAI } from './openai';
 import { callPerplexity } from './perplexity';
+import { callAnthropic } from './anthropic';
+import { callGemini } from './gemini';
+import { callDeepseek } from './deepseek';
 
 // Function to handle different text transformations
 export async function transformText(
@@ -48,6 +57,15 @@ export async function transformText(
     } else if (provider === 'perplexity') {
       console.log('Calling Perplexity API directly...');
       transformedText = await callPerplexity(text, action, model);
+    } else if (provider === 'anthropic') {
+      console.log('Calling Anthropic API directly...');
+      transformedText = await callAnthropic(text, action, model);
+    } else if (provider === 'google') {
+      console.log('Calling Google Gemini API directly...');
+      transformedText = await callGemini(text, action, model);
+    } else if (provider === 'deepseek') {
+      console.log('Calling Deepseek API directly...');
+      transformedText = await callDeepseek(text, action, model);
     } else {
       console.log('Unknown provider, using fallback');
       throw new Error('Unknown model provider');

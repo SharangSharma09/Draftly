@@ -1,82 +1,83 @@
 import { TransformAction } from '@/pages/TextTransformer';
 
-async function getGoogleApiKey(): Promise<string> {
+async function getDeepseekApiKey(): Promise<string> {
   return new Promise((resolve, reject) => {
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
       chrome.runtime.sendMessage({ type: 'getApiKeys' }, (response) => {
-        if (response && response.googleApiKey) {
-          resolve(response.googleApiKey);
+        if (response && response.deepseekApiKey) {
+          resolve(response.deepseekApiKey);
         } else {
-          reject(new Error('Google API key not found'));
+          reject(new Error('Deepseek API key not found'));
         }
       });
     } else {
       // For development/testing environment
-      const apiKey = process.env.GOOGLE_API_KEY;
+      const apiKey = process.env.DEEPSEEK_API_KEY;
       if (apiKey) {
         resolve(apiKey);
       } else {
-        reject(new Error('Google API key not found'));
+        reject(new Error('Deepseek API key not found'));
       }
     }
   });
 }
 
-export async function callGemini(
+export async function callDeepseek(
   text: string,
   action: TransformAction,
-  model: string = 'gemini-pro'
+  model: string = 'deepseek-coder'
 ): Promise<string> {
   try {
-    const apiKey = await getGoogleApiKey();
+    const apiKey = await getDeepseekApiKey();
     
     if (!apiKey) {
-      throw new Error('Please add your Google API key in the settings.');
+      throw new Error('Please add your Deepseek API key in the settings.');
     }
 
     const systemPrompt = createSystemPrompt(action);
     const userPrompt = `${systemPrompt}\n\nText to transform: "${text}"`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        contents: [
+        model: "deepseek-coder",
+        messages: [
           {
-            role: 'user',
-            parts: [{ text: userPrompt }]
+            role: "system",
+            content: systemPrompt
+          },
+          {
+            role: "user",
+            content: userPrompt
           }
         ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 2048,
-          topP: 0.95,
-          topK: 40
-        }
+        temperature: 0.7,
+        max_tokens: 2048
       })
     });
 
     if (!response.ok) {
-      throw new Error(`Google API request failed with status ${response.status}`);
+      throw new Error(`Deepseek API request failed with status ${response.status}`);
     }
 
     const responseData = await response.json();
     
     if (responseData && 
-        responseData.candidates && 
-        responseData.candidates.length > 0 && 
-        responseData.candidates[0].content &&
-        responseData.candidates[0].content.parts &&
-        responseData.candidates[0].content.parts.length > 0) {
+        responseData.choices && 
+        responseData.choices.length > 0 && 
+        responseData.choices[0].message &&
+        responseData.choices[0].message.content) {
       
-      return responseData.candidates[0].content.parts[0].text.trim();
+      return responseData.choices[0].message.content.trim();
     } else {
       return mockTransformResponse(text, action);
     }
   } catch (error) {
-    console.error('Error calling Gemini API:', error);
+    console.error('Error calling Deepseek API:', error);
     return mockTransformResponse(text, action);
   }
 }
@@ -140,7 +141,7 @@ function mockTransformResponse(text: string, action: TransformAction): string {
     case 'add_emoji':
       return `${text} 😊`;
     case 'remove_emoji':
-      // For mock implementation, just leave text as is since it's just a demonstration
+      // For mock implementation, just leave text as is
       return text;
     case 'fix_grammar':
       return `${text} [Grammar fixed version would appear here with a working API key]`;
